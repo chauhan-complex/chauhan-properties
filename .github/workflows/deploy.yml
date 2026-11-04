@@ -20,16 +20,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
-          cache: npm
+          # `cache: npm` is deliberately off — it hard-fails when package-lock.json
+          # is missing. Add it back once the lock file is committed.
 
       - name: Install dependencies
-        run: npm ci --no-audit --no-fund
+        run: |
+          if [ -f package-lock.json ]; then
+            echo "→ lock file found, using npm ci"
+            npm ci --no-audit --no-fund
+          else
+            echo "→ no lock file, using npm install"
+            npm install --no-audit --no-fund
+          fi
 
       - name: Typecheck
         run: npm run typecheck
@@ -42,23 +50,17 @@ jobs:
         env:
           EXPORT_STATIC: "1"
           NEXT_TELEMETRY_DISABLED: "1"
-          # Used for sitemap.xml, robots.txt and social share links.
-          # Set it in Settings → Secrets and variables → Actions → Variables.
-          NEXT_PUBLIC_SITE_URL: ${{ vars.SITE_URL }}
+          # Optional override; the code already defaults to https://chauhan.qd.je
+          NEXT_PUBLIC_SITE_URL: ${{ vars.SITE_URL || 'https://chauhan.qd.je' }}
 
-      # public/CNAME already carries chauhan.qd.je into out/CNAME.
-      # Set the PAGES_CNAME repository variable only to override it.
       - name: Attach the custom domain (CNAME)
         if: ${{ vars.PAGES_CNAME != '' }}
         run: echo "${{ vars.PAGES_CNAME }}" > out/CNAME
 
-      - name: Confirm the domain file
-        run: |
-          echo "out/CNAME -> $(cat out/CNAME 2>/dev/null || echo MISSING)"
-
       - name: Report what was built
         run: |
-          echo "Pages generated:"
+          echo "out/CNAME -> $(cat out/CNAME 2>/dev/null || echo MISSING)"
+          echo "Pages generated: $(find out -name '*.html' | wc -l)"
           find out -name '*.html' | sort | sed 's/^/  /'
           echo "Total size: $(du -sh out | cut -f1)"
 

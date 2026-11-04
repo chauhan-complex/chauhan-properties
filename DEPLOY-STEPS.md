@@ -357,6 +357,9 @@ array of the same file. Keep `priceBasis: "total"` unless you are quoting a per 
 | `www.chauhan.qd.je` fails | The `www` CNAME must point at `chauhan-complex.github.io`, not the repo path. |
 | `git push` says *rejected / fetch first* | `git pull --rebase origin main` then `git push`. |
 | Build fails on typecheck | The Actions log names the file and line — usually a missing comma in `src/data/site.ts`. |
+| Annotation: *"Dependencies lock file is not found"* | `package-lock.json` never got committed. The workflow now falls back to `npm install`, so the build still succeeds. To fix it properly (faster, reproducible builds): `npm install --package-lock-only` then `git add package-lock.json && git commit -m "Add npm lock file" && git push`. |
+| Annotation: *"Node.js 20 is deprecated"* | Informational only. The workflow now uses `actions/checkout@v7` and `actions/setup-node@v7`, which run on Node 24. |
+| Annotation: *"ubuntu-latest will migrate to Ubuntu 26"* | Informational notice from GitHub about their runners. Nothing to do — it does not affect the build. |
 | A new listing does not appear | Confirm the commit is on `main` and the run is green, then hard-refresh (Ctrl/Cmd + Shift + R). |
 | Hindi shows an English phrase somewhere | That string was added in English only — mirror it in `src/lib/content-hi.ts` or `src/lib/i18n.ts`. |
 
@@ -387,3 +390,113 @@ git add . && git commit -m "update" && git push
 
 Cost of this whole setup: **₹0** — GitHub, Actions, Pages, Cloudflare DNS and the DigitalPlat domain
 are all free. There is no server, no database and no login to maintain.
+
+---
+
+# Appendix · Windows PowerShell version (copy-paste)
+
+## The error `src refspec main does not match any`
+
+It means **there is no commit yet**. `git branch -M main` on an empty repository only renames an
+*unborn* branch — there is nothing to push. The two missing commands are `git add .` and
+`git commit`. Nothing is broken; just run them.
+
+## Before committing: check the hidden files survived the download
+
+Windows downloads and some zip tools drop files that start with a dot. Two of them matter, so check
+first — in the project folder (`C:\Users\admin\Downloads\chauhan-properties`):
+
+```powershell
+Get-ChildItem -Force .gitignore | Select-Object Name
+Get-ChildItem -Force public\.nojekyll, public\CNAME | Select-Object Name
+```
+
+You should see `.gitignore`, `.nojekyll` and `CNAME`. **If any is missing**, recreate it:
+
+```powershell
+# .gitignore — keeps node_modules and secrets out of GitHub
+@'
+node_modules/
+.next/
+out/
+build/
+.env
+.env.*
+!.env.example
+.vercel
+.turbo
+*.tsbuildinfo
+npm-debug.log*
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+'@ | Set-Content -Encoding utf8 .gitignore
+
+# public\.nojekyll — without it GitHub Pages hides the /_next folder and the site loads unstyled
+New-Item -ItemType File -Force public\.nojekyll | Out-Null
+
+# public\CNAME — your domain, shipped with every build
+"chauhan.qd.je" | Set-Content -Encoding ascii -NoNewline public\CNAME
+```
+
+## The full sequence
+
+```powershell
+cd C:\Users\admin\Downloads\chauhan-properties
+
+git init
+git config --global credential.useHttpPath true
+git config user.name "chauhan-complex"
+git config user.email "mukeshchauhan2654@gmail.com"
+git remote add origin https://chauhan-complex@github.com/chauhan-complex/chauhan-properties.git
+
+# --- the part that was missing ---
+git add .
+git status --short | Measure-Object -Line                       # expect roughly 90-120 lines
+git status --short | Select-String -Pattern "\.env|node_modules" # must print NOTHING
+git commit -m "Chauhan Properties website"
+
+git branch -M main
+git push -u origin main
+```
+
+**Reading the checks:**
+
+- `Measure-Object -Line` around **90–120** is right. If it reports **thousands**, `.gitignore` is
+  missing and git is about to upload `node_modules` — stop, create the `.gitignore` block above, then
+  `git rm -r --cached . ; git add .` and check again.
+- The `Select-String` line must print nothing. If it prints `.env`, run `git rm --cached .env` and
+  commit again — that file holds secrets.
+- Warnings like `LF will be replaced by CRLF` are normal on Windows and harmless.
+
+## The push prompt
+
+Because the remote URL contains `chauhan-complex@`, Git Credential Manager will ask you to sign in to
+**that** account:
+
+- If a **browser window** opens → sign in as `chauhan-complex` → **Authorize**.
+- If it asks for a **password in a dialog** → paste a **Personal Access Token** created on the
+  `chauhan-complex` account (Settings → Developer settings → Personal access tokens → Tokens
+  (classic) → Generate new token, scope `repo`). A normal password is rejected.
+- If it signs you in as `brodante` anyway → clear the stored credential and retry:
+  ```powershell
+  cmdkey /list | Select-String github        # see what is stored
+  cmdkey /delete:LegacyGeneric:target=git:https://chauhan-complex@github.com
+  git push -u origin main
+  ```
+
+Success looks like:
+
+```
+Enumerating objects: 120, done.
+...
+To https://github.com/chauhan-complex/chauhan-properties.git
+ * [new branch]      main -> main
+branch 'main' set up to track 'origin/main'.
+```
+
+## Then continue at STEP 6
+
+Refresh the repository page → **Actions** tab → the first run fails until you set
+**Settings → Pages → Source: `GitHub Actions`** (STEP 7), then **Actions → Run workflow** (STEP 8).
