@@ -1,0 +1,52 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# next.js
+.next/
+out/
+build/
+next-env.d.ts.bak
+
+# production
+dist/
+
+# ─── SECRETS: never commit these ───────────────────────────────
+# Your real .env holds DATABASE_URL, ADMIN_CODE and ADMIN_SECRET.
+# GitHub would expose them publicly. Use .env.example as the template.
+.env
+.env.*
+!.env.example
+*.pem
+
+# vercel / other platforms
+.vercel
+.netlify
+.turbo
+
+# database / drizzle
+drizzle/
+*.sqlite
+
+# logs & debugging
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+logs/
+
+# typescript
+*.tsbuildinfo
+
+# editors & OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# misc
+coverage/
+tmp/
+/tmp

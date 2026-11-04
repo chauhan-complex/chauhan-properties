@@ -1,0 +1,282 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --font-body: "Plus Jakarta Sans", "Segoe UI", Helvetica, sans-serif;
+
+  --color-ink: #0c1613;
+  --color-ink-soft: #1c2c26;
+  --color-moss: #1d4b3a;
+  --color-moss-soft: #2f6d54;
+  --color-brass: #c08a22;
+  --color-brass-soft: #e0b153;
+  --color-clay: #ad4f39;
+  --color-paper: #f6f1e6;
+  --color-paper-deep: #eae1cf;
+  --color-cream: #fdfaf3;
+  --color-stone: #6a7972;
+  --color-line: #d9cfba;
+
+  --animate-kenburns: kenburns 26s ease-in-out infinite alternate;
+  --animate-marquee: marquee 42s linear infinite;
+  --animate-marquee-slow: marquee 70s linear infinite;
+  --animate-drift: drift 18s ease-in-out infinite alternate;
+  --animate-pulse-ring: pulse-ring 2.6s ease-out infinite;
+}
+
+@keyframes kenburns {
+  0% {
+    transform: scale(1.04) translate3d(0, 0, 0);
+  }
+  100% {
+    transform: scale(1.18) translate3d(-2%, -1.5%, 0);
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes drift {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate3d(0, -18px, 0) rotate(2deg);
+  }
+}
+
+@keyframes dash-drift {
+  to {
+    stroke-dashoffset: -120;
+  }
+}
+
+.animate-dash {
+  animation: dash-drift 9s linear infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.7;
+  }
+  80%,
+  100% {
+    transform: scale(1.7);
+    opacity: 0;
+  }
+}
+
+@keyframes line-rise {
+  0% {
+    transform: translate3d(0, 108%, 0) rotate(2deg);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  /*
+   * Both languages are rendered into the static HTML; CSS shows one of them.
+   * <html lang> is set from the visitor's cookie by an inline script in the
+   * head, before the first paint — so there is no flash of the wrong language.
+   */
+  html[lang="hi"] .i18n-en {
+    display: none !important;
+  }
+
+  html:not([lang="hi"]) .i18n-hi {
+    display: none !important;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-feature-settings: "ss01", "cv01";
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: var(--color-brass-soft);
+    color: var(--color-ink);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    font-variation-settings: "SOFT" 0, "WONK" 1;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brass);
+    outline-offset: 3px;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    font-family: inherit;
+  }
+}
+
+@layer utilities {
+  .eyebrow {
+    font-size: 0.68rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* --- grain / noise overlay --- */
+  .grain::after {
+    content: "";
+    position: fixed;
+    inset: -50%;
+    pointer-events: none;
+    z-index: 60;
+    opacity: 0.045;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* --- scroll reveal --- */
+  .reveal {
+    opacity: 0;
+    transform: translate3d(0, 26px, 0);
+    transition:
+      opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+
+  .reveal[data-visible="true"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* --- line-mask heading reveal --- */
+  .line-mask {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.08em;
+  }
+
+  .line-mask > span {
+    display: block;
+    transform: translate3d(0, 108%, 0);
+    animation: line-rise 1.05s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: var(--line-delay, 0ms);
+  }
+
+  /* --- animated underline links --- */
+  .rule-link {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .rule-link:hover {
+    background-size: 100% 1px;
+  }
+
+  /* --- marquee --- */
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: var(--animate-marquee);
+  }
+
+  .marquee-host:hover .marquee-track {
+    animation-play-state: paused;
+  }
+
+  /* --- paper texture card --- */
+  .card-lift {
+    transition:
+      transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.4s ease;
+  }
+
+  .card-lift:hover {
+    transform: translate3d(0, -6px, 0);
+    box-shadow: 0 26px 50px -28px rgba(12, 22, 19, 0.55);
+  }
+
+  .paper-grid {
+    background-image:
+      linear-gradient(to right, rgba(29, 75, 58, 0.07) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(29, 75, 58, 0.07) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+
+  .stamp {
+    border: 1px solid var(--color-line);
+    box-shadow: inset 0 0 0 3px rgba(253, 250, 243, 0.6);
+  }
+}
+
+/* thin custom scrollbar for filter rails */
+.rail::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+.rail::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 99px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .line-mask > span {
+    transform: none !important;
+  }
+
+  .card-lift:hover {
+    transform: none;
+  }
+}

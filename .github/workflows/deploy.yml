@@ -1,0 +1,83 @@
+name: Build and deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build the static site
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Drop server-only routes (GitHub Pages has no server)
+        run: rm -rf src/app/api
+
+      - name: Build the static export
+        run: npx next build
+        env:
+          EXPORT_STATIC: "1"
+          NEXT_TELEMETRY_DISABLED: "1"
+          # Used for sitemap.xml, robots.txt and social share links.
+          # Set it in Settings → Secrets and variables → Actions → Variables.
+          NEXT_PUBLIC_SITE_URL: ${{ vars.SITE_URL }}
+
+      # public/CNAME already carries chauhan.qd.je into out/CNAME.
+      # Set the PAGES_CNAME repository variable only to override it.
+      - name: Attach the custom domain (CNAME)
+        if: ${{ vars.PAGES_CNAME != '' }}
+        run: echo "${{ vars.PAGES_CNAME }}" > out/CNAME
+
+      - name: Confirm the domain file
+        run: |
+          echo "out/CNAME -> $(cat out/CNAME 2>/dev/null || echo MISSING)"
+
+      - name: Report what was built
+        run: |
+          echo "Pages generated:"
+          find out -name '*.html' | sort | sed 's/^/  /'
+          echo "Total size: $(du -sh out | cut -f1)"
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    name: Publish to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

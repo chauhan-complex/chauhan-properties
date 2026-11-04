@@ -1,0 +1,2 @@
+# Without this file GitHub Pages runs Jekyll and ignores every folder that
+# starts with an underscore — including /_next, which holds the CSS and JS.
