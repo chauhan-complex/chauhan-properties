@@ -1,129 +1,86 @@
-# Chauhan Properties — Lucknow
+# Chauhan Properties — chauhan.qd.je
 
-A bilingual (English / हिन्दी) **static** property website for **Mukesh Singh Chauhan**,
-Chauhan Complex, Kudrat Vihar Colony, **Sarojini Nagar, Lucknow 226008**.
+The website of **Mukesh Singh Chauhan**, Chauhan Complex, Kudrat Vihar Colony,
+**Sarojini Nagar, Lucknow 226008** — land and property in **Amausi, Gauri, Miranpur Pinwat,
+Aurawan and Piparsand**.
 
-Land and property in **Amausi · Gauri · Miranpur Pinwat · Aurawan · Piparsand** —
-146 properties handled, 9 published here, the rest shared on a call.
+📞 **+91 79051 42519** (call and WhatsApp) · ✉️ **chauhanproperties.lko@gmail.com**
+🌐 **https://chauhan.qd.je** · English and हिन्दी, switchable from the header
 
-| | |
-|---|---|
-| **Phone / WhatsApp** | +91 79051 42519 |
-| **Email** | chauhanproperties.lko@gmail.com |
-| **👉 Deploy now** | **[DEPLOY-STEPS.md](./DEPLOY-STEPS.md)** — 14 tick-box steps for `chauhan.qd.je` |
-| **GitHub account** | Hosted on `chauhan-complex`, not `brodante` — see **[PUSH-TO-CHAUHAN-COMPLEX.md](./PUSH-TO-CHAUHAN-COMPLEX.md)** |
-| **Hosting** | GitHub Pages via GitHub Actions — detail & troubleshooting in [DEPLOYMENT.md](./DEPLOYMENT.md) |
-| **Content** | one file: [`src/data/site.ts`](./src/data/site.ts) |
-| **Photos & video** | [MEDIA-GUIDE.md](./MEDIA-GUIDE.md) — YouTube for video, `public/photos/` for images, naming convention |
+146 properties in his own name, 12 published here. Every listing is his own property — buyers deal
+with the owner directly, with no broker in between.
 
 ---
 
-## No database, no admin panel, no server
+## What visitors can do
 
-Everything a visitor sees is generated into plain HTML at build time and served by GitHub Pages —
-the same architecture as `kanji-widget-app`. That means:
+| Page | What it offers |
+|---|---|
+| `/` | The five areas with live per sq.ft rates and what each sits near, a 3-tap property search, services, how a deal moves, common questions |
+| `/properties/` | All published listings, filterable by deal type, property type, area and keyword |
+| `/properties/<listing>/` | Photos, walkthrough video, the exact map pin, rate, landmarks nearby, and Call / WhatsApp |
+| `/sell/` | A form for owners who want their property sold or rented out — it composes a WhatsApp message or email |
+| `/about/` | Who he is, how the desk works, the areas covered |
+| `/contact/` | Office map with the exact pin, opening hours with a live open/closed indicator, and a message form |
 
-- **free forever** hosting, no cold starts, no uptime worries;
-- nothing to patch, no login to protect, no database to back up;
-- content changes are made **in the code** (one TypeScript file) and published by `git push`.
+Every Call and WhatsApp button on the site goes to +91 79051 42519. The enquiry forms do not store
+anything — they hand the visitor's details to WhatsApp or their own email app, so enquiries reach
+him directly.
 
-Visitors can **call**, **WhatsApp**, or **email** — the contact and "sell your property" forms
-compose the message for them and hand it to WhatsApp or their email app, so enquiries reach the owner
-directly with nothing stored anywhere.
+Currently listed: nine land parcels, the farmhouse plot at Aurawan, the two-storey semi-furnished
+house at Amausi (24 site photos plus a full-building tour), and Chauhan Complex itself — shops,
+offices, flats and godown space on rent.
 
-## What the site has
+---
 
-- Home page: hero over a hand-drawn SVG survey map of the five villages, 3-tap search, live rate card
-  (min–max ₹/sq.ft and parcel count per village), services, process, FAQ, contact block.
-- **Listings page** — filters (deal type, property type, village, keyword, sort) run in the browser,
-  grid or list view, shareable `?locality=…` URLs.
-- **Listing page** — rate card with the per sq.ft price, photo/video gallery (with a bilingual
-  "photographs on request" placeholder until photos are added), highlights, embedded Google Map,
-  similar parcels, Call / WhatsApp / email.
-- **Sell / rent out** page with a paper checklist, and a **Contact** page with a live open/closed
-  indicator in Indian time, the exact office pin and directions.
-- **हिन्दी toggle** — both languages are rendered into the HTML and CSS shows the active one, so the
-  switch is instant, there is no flash, and Google can read both. Prices become
-  `₹3,500 प्रति वर्ग फुट`, villages become `मीरानपुर पिनवट`, area units become `बीघा / वर्ग फुट`.
-- `sitemap.xml`, `robots.txt`, `RealEstateAgent` + `RealEstateListing` JSON-LD, custom 404,
-  `prefers-reduced-motion` support, no stock photography anywhere.
+## Updating the website
 
-## Tech
+Everything is in **one file: `src/data/site.ts`**.
 
-Next.js (App Router) · React 19 · TypeScript · Tailwind CSS v4 — exported to static HTML with
-`output: 'export'`. No icon library (hand-drawn inline SVG), no UI kit, no database, no CMS.
+1. Open it on github.com and press the **pencil** icon.
+2. Change a rate, add a parcel, or edit the phone number / address / about text.
+3. **Commit changes** to `main`.
 
-## Where the content lives
+GitHub Actions rebuilds and republishes the site in about two minutes. There is no database, no admin
+login and nothing to restart.
 
-**`src/data/site.ts`** is the only file you need for day-to-day changes.
+| To change | Edit |
+|---|---|
+| A rate, or add a land parcel | the `PARCELS` list — one line per plot |
+| The five areas and their rates | `AREAS` |
+| Landmarks near an area | `near` / `nearHi` in `AREAS` |
+| Phone, WhatsApp, email, address, hours | `SITE` |
+| "146 properties in hand" | `portfolioTotal` in `SITE` |
+| The About text | `aboutLong` / `aboutLongHi` in `SITE` |
+| A house, shop, flat or rental | `makeListing({...})` in `EXTRA` — there is a worked example |
+| Photos | add a Drive file ID to `DRIVE_IDS`, then its name and captions to `HOUSE_PHOTOS` |
+| A video | paste a YouTube (Unlisted) link into `videoUrl` |
 
-```ts
-SITE = { businessName, ownerName, phone, whatsapp, email, officeAddress,
-         officeMapUrl, hours / hoursHi, aboutShort(Hi), aboutLong(Hi), portfolioTotal: 146 }
+Interface wording lives in `src/lib/i18n.ts` (both languages side by side), the longer editorial text
+in `src/lib/content.ts` (English) and `src/lib/content-hi.ts` (Hindi).
 
-PARCELS = [                                  // ← the nine published land parcels
-  { village: "Miranpur Pinwat", villageHi: "मीरानपुर पिनवट", rate: 3500, featured: true, listed: "2026-01-12" },
-  { village: "Amausi",          villageHi: "अमौसी",         rate: 2500, featured: true, listed: "2026-01-04" },
-  …
-]
-```
+`MEDIA-GUIDE.md` explains photos and video in detail. `tools/rename-photos.py` renames and compresses
+a folder of phone photos if you ever prefer to host them here instead of on Drive.
 
-- **Change a rate** → edit the `rate` number. The title, slug, description, highlights, rate card and
-  sitemap all regenerate from it, in both languages.
-- **Add a parcel** → add one line to `PARCELS`.
-- **Add a house, shop, flat or rental** → use `makeListing({...})` in the `EXTRA` array (the file has
-  a commented example). Set `priceBasis: "per_sqft"` only for land rates; leave it `"total"` for a
-  whole-property price, and `purpose: "rent"` or `"lease"` for rentals.
-- **Office details, phone, address, about text** → edit `SITE`.
+---
 
-Other text lives in `src/lib/content.ts` (English) and `src/lib/content-hi.ts` (Hindi); interface
-strings are in `src/lib/i18n.ts`.
+## Publishing
 
-### Photos and videos
+`git push` to `main` is the whole deployment. GitHub Actions builds a static copy and GitHub Pages
+serves it at `chauhan.qd.je`; the `CNAME` file and the domain's DNS records are already in place.
 
-Put images in `public/photos/` and reference them as `/photos/amausi-1000-1.jpg` inside a listing's
-`images: [...]` array — the first one is the card cover. Videos: paste a YouTube link (unlisted is
-fine) or a direct `.mp4` URL into `videoUrl`. Until then the site shows the branded
-"Photographs on request / फ़ोटो माँगने पर भेजी जाती हैं" placeholder.
+`DEPLOY-STEPS.md` has the full setup from scratch, `DEPLOYMENT.md` has the DNS detail and
+troubleshooting, and `HTTPS-FIX.md` covers the certificate wait.
 
-### Maps
+---
 
-Open the spot in Google Maps → *Share* → *Copy link* → paste into `mapUrl`. The embedded map is built
-from the coordinates in that link, so the pin lands exactly where the property is.
+## Built with
 
-## Running it locally
+Next.js (App Router) exported to static HTML · React 19 · TypeScript · Tailwind CSS v4. No database,
+no CMS, no icon library — every icon is hand-drawn SVG and the area map is generated SVG. Both
+languages ship in the HTML and CSS shows the active one, so switching is instant and Google can read
+either version.
 
-```bash
-npm install
-npm run dev            # http://localhost:3000 — full site with hot reload
-```
-
-Build the exact folder that goes to GitHub Pages:
-
-```bash
-rm -rf src/app/api && EXPORT_STATIC=1 npm run build   # writes ./out
-npx serve out                                          # preview the static site
-```
-
-(`src/app/api/health` exists only so a Node preview of the same code can be smoke-tested; the Pages
-workflow deletes it because Pages has no server.)
-
-## Deployment
-
-Full step-by-step — GitHub repo, Pages, the Actions workflow, the free DigitalPlat domain and the
-Cloudflare DNS records — is in **[DEPLOYMENT.md](./DEPLOYMENT.md)**.
-
-Short version:
-
-```bash
-git init && git add . && git commit -m "Chauhan Properties website" && git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/chauhan-properties.git
-git push -u origin main
-```
-
-The domain is already wired in: `public/CNAME` contains **`chauhan.qd.je`** and
-`sitemap.xml` / `robots.txt` / share cards default to `https://chauhan.qd.je`, so there are
-**no environment variables to set**. In the repo you only need:
-**Settings → Pages → Source: `GitHub Actions`**, then add the four GitHub Pages `A` records
-(`185.199.108.153`–`185.199.111.153`) plus a `www` CNAME in Cloudflare, with the clouds left grey.
-`.github/workflows/deploy.yml` builds `./out` and publishes it on every push.
+Photographs are served from a public Google Drive folder, so updating a photo never needs a code
+change or a large file in the repository. **That folder must stay shared as "Anyone with the link"** —
+restricting it breaks every image on the site.

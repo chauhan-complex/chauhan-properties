@@ -6,6 +6,7 @@ import { Icon } from "./icons";
 import { useLang } from "./lang-provider";
 import { cn, isDirectVideo, youtubeId } from "@/lib/utils";
 import { captionFromFilename, isOpaqueUrl, videoList } from "@/lib/media";
+import { Bi } from "@/lib/dual";
 
 interface GalleryProps {
   images: string[];
@@ -98,13 +99,11 @@ export default function Gallery({ images, videoUrl, title, captions }: GalleryPr
             orientations; contain guarantees nothing is cropped, and the fixed
             height guarantees the page below never shifts when you change photo. */}
         <div className="group relative h-[440px] overflow-hidden rounded-[3px] border border-line bg-ink sm:h-[560px] lg:h-[620px]">
+          {/* Deliberately NOT a button: tapping the photo used to open a
+              full-screen overlay, which trapped anyone who tapped by accident.
+              The only way in now is the explicit "Full screen" pill below. */}
           {current.type === "image" ? (
-            <button
-              type="button"
-              onClick={() => setLightbox(true)}
-              className="absolute inset-0 h-full w-full cursor-zoom-in"
-              aria-label={t("gallery.fullscreen")}
-            >
+            <div className="absolute inset-0 h-full w-full">
               <Image
                 key={current.src}
                 src={current.src}
@@ -114,7 +113,7 @@ export default function Gallery({ images, videoUrl, title, captions }: GalleryPr
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 62vw"
                 className="object-contain"
               />
-            </button>
+            </div>
           ) : (
             <VideoStage src={current.src} title={title} label={t("gallery.watch")} />
           )}
@@ -219,25 +218,34 @@ export default function Gallery({ images, videoUrl, title, captions }: GalleryPr
 
       {lightbox ? (
         <div
-          className="fixed inset-0 z-[80] flex flex-col bg-ink/96 backdrop-blur-sm"
+          className="fixed inset-0 z-[80] flex flex-col bg-ink/97 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
           aria-label={t("gallery.fullscreen")}
           onClick={() => setLightbox(false)}
         >
-          <div className="flex items-center justify-between px-5 py-4 text-cream/70">
+          <div className="flex items-center justify-between gap-4 px-5 py-4 text-cream/70">
             <span className="text-[0.8rem] tracking-[0.18em] uppercase tnum">
               {index + 1} / {media.length}
+              {current.caption ? (
+                <span className="ml-3 normal-case tracking-normal text-cream/55">{current.caption}</span>
+              ) : null}
             </span>
+            {/* Big, obvious, always in the same corner — an unfamiliar visitor
+                must be able to find the exit without hunting. */}
             <button
               type="button"
               onClick={() => setLightbox(false)}
-              className="flex items-center gap-2 rounded-full border border-cream/25 px-4 py-2 text-[0.75rem] tracking-[0.16em] uppercase transition-colors hover:border-brass-soft hover:text-brass-soft"
+              aria-label={t("gallery.close")}
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brass text-ink shadow-lg transition-transform duration-200 hover:scale-105 active:scale-95"
             >
-              <Icon name="close" size={15} /> {t("gallery.close")}
+              <Icon name="close" size={22} strokeWidth={2} />
             </button>
           </div>
-          <div className="relative flex-1" onClick={(e) => e.stopPropagation()}>
+
+          {/* Pinch-to-zoom works here (touch-action), and tapping anywhere
+              outside the arrows closes the viewer. */}
+          <div className="relative flex-1" style={{ touchAction: "pinch-zoom" }}>
             {current.type === "image" ? (
               <Image
                 src={current.src}
@@ -247,14 +255,20 @@ export default function Gallery({ images, videoUrl, title, captions }: GalleryPr
                 className="object-contain"
               />
             ) : (
-              <div className="flex h-full items-center justify-center p-6">
+              <div className="flex h-full items-center justify-center p-6" onClick={(e) => e.stopPropagation()}>
                 <div className="relative aspect-video w-full max-w-4xl">
                   <VideoStage src={current.src} title={title} label={t("gallery.watch")} />
                 </div>
               </div>
             )}
-            <NavButton side="left" onClick={() => go(-1)} tone="light" label={t("gallery.prev")} />
-            <NavButton side="right" onClick={() => go(1)} tone="light" label={t("gallery.next")} />
+            <span onClick={(e) => e.stopPropagation()}>
+              <NavButton side="left" onClick={() => go(-1)} tone="light" label={t("gallery.prev")} />
+              <NavButton side="right" onClick={() => go(1)} tone="light" label={t("gallery.next")} />
+            </span>
+          </div>
+
+          <div className="px-5 py-4 text-center text-[0.8rem] text-cream/55">
+            <Bi en="Tap anywhere, or press Esc, to close. Pinch to zoom." hi="बंद करने के लिए कहीं भी टैप करें या Esc दबाएँ। ज़ूम के लिए पिंच करें।" />
           </div>
         </div>
       ) : null}
