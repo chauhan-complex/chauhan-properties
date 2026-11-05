@@ -68,6 +68,21 @@ export function captionFromFilename(
   return { floor, caption, full };
 }
 
+/**
+ * True when a src carries no readable filename — Google Drive (`…/d/<id>`),
+ * content-hash CDNs, and similar. Those get no auto-caption; pass `captions`
+ * explicitly instead.
+ */
+export function isOpaqueUrl(src: string): boolean {
+  const s = (src || "").toLowerCase();
+  return (
+    s.includes("googleusercontent.com") ||
+    s.includes("drive.google.com") ||
+    /[?&](fbclid|igshid|token)=/.test(s) ||
+    /\/[a-z0-9_-]{25,}(\.|=|$)/.test(s)
+  );
+}
+
 /** One `videoUrl` string may hold several links, separated by a newline or comma. */
 export function videoList(videoUrl: string | null | undefined): string[] {
   if (!videoUrl) return [];

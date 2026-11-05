@@ -55,7 +55,13 @@ export default function PropertyCard({
         <div className={cn("relative w-full", isList ? "aspect-4/3 sm:h-full" : "aspect-4/3")}>
           <Image
             src={cover}
-            alt={`${property.title}${cover.startsWith("/photos/") ? ` — ${captionFromFilename(cover, "en").full}` : ""}`}
+            alt={`${property.title}${
+              property.imageCaptions?.[0]?.en
+                ? ` — ${property.imageCaptions[0].en}`
+                : cover.startsWith("/photos/")
+                  ? ` — ${captionFromFilename(cover, "en").full}`
+                  : ""
+            }`}
             fill
             sizes={isList ? "(max-width: 640px) 100vw, 38vw" : "(max-width: 768px) 100vw, 33vw"}
             className="object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-[1.07]"

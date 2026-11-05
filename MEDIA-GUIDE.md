@@ -8,6 +8,47 @@ generated automatically from your filenames.
 
 ---
 
+---
+
+## 0 · How this site currently gets its photos (read this first)
+
+**Photos are served straight from the public Google Drive folder — nothing is committed as a binary.**
+
+Why: a "download project → copy → git push" round trip silently drops image files, which is exactly
+what broke the gallery once. Google Drive is now the photo store, and the code just references URLs:
+
+```ts
+// src/data/site.ts
+const PHOTO_SOURCE: "drive" | "local" = "drive";   // ← the switch
+const DRIVE_IDS: Record<string, string> = { "exterior-front.jpg": "1Jpcy12foQBJun1hk_aP1FmKZlxJ27MBM", … };
+export function photoUrl(name: string) {
+  return PHOTO_SOURCE === "drive"
+    ? `https://lh3.googleusercontent.com/d/${DRIVE_IDS[name]}=w1200`
+    : `/photos/amausi-house/${name}`;
+}
+```
+
+`=w1200` asks Google for a 1200 px wide render, which comes back at roughly 140–420 KB — already
+reasonable, and no compression step needed on your side.
+
+**To add a Drive photo:** right-click the file in Drive → *Get link* → make sure sharing is
+**"Anyone with the link"** → the link looks like
+`https://drive.google.com/file/d/FILE_ID/view`. Copy just the `FILE_ID`, add a line to `DRIVE_IDS`,
+add the name to `HOUSE_PHOTOS` (with its English and Hindi caption), commit. Done — no binaries.
+
+**Captions:** Drive URLs have no readable filename, so captions come from `HOUSE_PHOTOS`
+(`["exterior-front.jpg", "Exterior front", "बाहरी अगला भाग"]`). Local files still auto-caption from
+their filename.
+
+**If you'd rather self-host** (faster, no dependency on Google): run
+`python tools/rename-photos.py <folder> -o public/photos/<property>`, commit the output, then set
+`PHOTO_SOURCE = "local"`.
+
+**Keeping the Drive folder public matters** — if you ever change it to "Restricted", every photo on
+the site breaks instantly.
+
+---
+
 ## 1 · Video: use YouTube, Unlisted
 
 **Why YouTube and not Drive or the repo:**
@@ -227,3 +268,32 @@ Then commit to `main`. GitHub Actions rebuilds in about two minutes.
 
 If the site ever gets heavy traffic, the easy upgrade is to move photos to Cloudflare Images or
 Bunny CDN and just change the paths — the code already accepts any image URL, local or remote.
+
+---
+
+## 7 · The rename/compress script
+
+`tools/rename-photos.py` turns your usual Drive/phone filenames into the convention this site
+understands, numbering each floor in order so the gallery reads like a walk through the house:
+
+```
+1_kitchen.JPG            ->  1-1-kitchen.jpg         caption "Ground floor · Kitchen"
+1_kitchen_widepicture.JPG->  1-2-kitchen-widepicture.jpg
+2_staircase.JPG          ->  2-1-staircase.jpg       caption "First floor · Staircase"
+3_rooftop.JPG            ->  3-1-rooftop.jpg
+front.JPG                ->  o-1-front.jpg           caption "Outside · Front"
+```
+
+```bash
+python tools/rename-photos.py C:\Users\admin\Downloads\house-photos --dry-run   # preview
+python tools/rename-photos.py C:\Users\admin\Downloads\house-photos -o public/photos/amausi-house
+```
+
+It renames with nothing installed. With Pillow (`pip install pillow`) it also resizes to 1800 px and
+recompresses to quality 78, which is what keeps the site fast. If you would rather not install
+anything, use <https://squoosh.app> instead — free, runs in the browser, nothing is uploaded.
+
+*(The rename-only path is tested; the Pillow path could not be exercised in the build sandbox because
+Pillow would not install there, but it is standard `Image.open → thumbnail → save` usage. Run
+`--dry-run` first if you want to be sure.)*
+

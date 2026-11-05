@@ -128,7 +128,12 @@ export default async function PropertyPage({ params }: { params: Promise<Params>
         <div className="grid gap-10 lg:grid-cols-[1.55fr_1fr] lg:gap-12">
           <div className="min-w-0">
             <Reveal>
-              <Gallery images={property.images} videoUrl={property.videoUrl} title={property.title} />
+              <Gallery
+                images={property.images}
+                videoUrl={property.videoUrl}
+                title={property.title}
+                captions={property.imageCaptions}
+              />
             </Reveal>
 
             <Reveal delay={80} className="mt-8">

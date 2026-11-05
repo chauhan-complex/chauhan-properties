@@ -78,6 +78,8 @@ export interface Property {
   coordsLabel: string;
   videoUrl: string;
   images: string[];
+  /** Optional caption per image, used when filenames are opaque (e.g. Drive URLs). */
+  imageCaptions?: Array<{ en: string; hi: string }>;
   near: string[];
   nearHi: string[];
   highlights: string[];
@@ -524,6 +526,90 @@ function build(parcel: Parcel, index: number): Property {
   };
 }
 
+/* ─────────── photos ───────────
+ *
+ * Photos are served straight from the public Google Drive folder by default, so
+ * nothing has to be committed as a binary file (a plain "download project → push"
+ * often drops image files, which is what broke the gallery once).
+ *
+ * To self-host instead: put the same files in public/photos/amausi-house/, flip
+ * PHOTO_SOURCE to "local", and commit them. Everything else stays identical.
+ */
+
+const PHOTO_SOURCE: "drive" | "local" = "drive";
+
+const DRIVE_IDS: Record<string, string> = {
+  "bathroom-1.jpg": "15TjTfaR5XG8Zx_VbGV_Jok0QaeNxQXiv",
+  "bathroom-2.jpg": "1HswOdDKAq_vfYxoJY5PldQEvafIn2t3l",
+  "bathroom-3.jpg": "1tm0VJC0W1XYsmYcws3leim2lmukptwDy",
+  "bathroom-4.jpg": "1nU6slzarqRjaG-SyddOnNnQgejahvFlP",
+  "corridor-1.jpg": "1tqKS5WC6sAvwE4oHLQjLOve_WR6zXTXY",
+  "corridor-2.jpg": "1LzbJh3Fw9mKdIGjlynRjJ13Ga3n_OP95",
+  "exterior-front-wide.jpg": "1Que28qLA0WCqHQw_CHlYurA2qlRCFzUi",
+  "exterior-front.jpg": "1Jpcy12foQBJun1hk_aP1FmKZlxJ27MBM",
+  "kitchen-1.jpg": "12LF22S75dOOZ-rcowy4J5DW04wOKB2Oq",
+  "kitchen-2.jpg": "1W5-9m3xbFARxw5geu_EhDS2w-ZiAat6K",
+  "kitchen-3.jpg": "1CvWIH6f_y8_URHF2BNu3K6SzHV8o4T6T",
+  "kitchen-4.jpg": "1tsr1WO3SKHN2de-MyiJsbCbPphO0oimV",
+  "rooftop-open.jpg": "1Q4qEfm5Sghim9vydUvP7sKzXhxrXt9dv",
+  "rooftop-tank-room.jpg": "1l0SLE0MQ3zJ2mdrZlcEp0blHJZ8kUVxy",
+  "room-1.jpg": "1toTH1015joquacU_EDlyWJ--I7ZvfeZi",
+  "room-2.jpg": "1Uavb2xEpos17OVKyI396Ksfji16HWf_Y",
+  "room-3.jpg": "1ZmHA855MfL_g-mzpK6aQtQQZhs-F5nET",
+  "room-4.jpg": "1xyLWhX3xlXXuRCp2M7PAJMCwss5Via3V",
+  "room-5.jpg": "1s3YhpHftQW71mW1HWu3i6QtEkrbdiesA",
+  "room-6.jpg": "1yY6lfz59cVVkhMfTx_sPGrMrQQqH2be6",
+  "room-7.jpg": "1_df6GjYNixFKmKQstHkyIq08yWMSO3rq",
+  "room-8.jpg": "1z3Q6ZNIA4D1HcVv-C_Ks_3EKuXSBUokf",
+  "staircase-1.jpg": "1vGkqbs6Pu4AMJX99u-SqDIyERdJ95_A1",
+  "staircase-2.jpg": "1EU0PA6hyJ5b23oNSnFQX4CcSvL5K1Y90",
+};
+
+/** filename → Drive URL (compressed to 1200 px wide by Google's image service). */
+export function photoUrl(name: string): string {
+  if (PHOTO_SOURCE === "local") return `/photos/amausi-house/${name}`;
+  const id = DRIVE_IDS[name];
+  return id ? `https://lh3.googleusercontent.com/d/${id}=w1200` : `/photos/amausi-house/${name}`;
+}
+
+/** Ordered gallery for the Amausi house: filename, English caption, Hindi caption. */
+const HOUSE_PHOTOS: Array<[string, string, string]> = [
+  ["exterior-front.jpg", "Exterior front", "बाहरी अगला भाग"],
+  ["exterior-front-wide.jpg", "Exterior, wider view", "बाहरी अगला भाग — चौड़ा दृश्य"],
+  ["staircase-1.jpg", "Staircase", "सीढ़ियाँ"],
+  ["corridor-1.jpg", "Corridor", "गलियारा"],
+  ["corridor-2.jpg", "Corridor with doors", "दरवाज़ों वाला गलियारा"],
+  ["kitchen-1.jpg", "Kitchen", "रसोई"],
+  ["kitchen-2.jpg", "Kitchen with window", "खिड़की वाली रसोई"],
+  ["kitchen-3.jpg", "Kitchen platform", "रसोई का प्लेटफ़ॉर्म"],
+  ["kitchen-4.jpg", "Kitchen shelves", "रसोई की अलमारियाँ"],
+  ["room-1.jpg", "Room with arched window", "मेहराबदार खिड़की वाला कमरा"],
+  ["room-2.jpg", "Room", "कमरा"],
+  ["room-3.jpg", "Room, marble floor", "कमरा, संगमरमर फर्श"],
+  ["room-4.jpg", "Room with shelves", "अलमारी वाला कमरा"],
+  ["room-5.jpg", "Room with window", "खिड़की वाला कमरा"],
+  ["room-6.jpg", "Room doorway", "कमरे का दरवाज़ा"],
+  ["room-7.jpg", "Room with chair", "कुर्सी वाला कमरा"],
+  ["room-8.jpg", "Room with mirror", "शीशे वाला कमरा"],
+  ["bathroom-1.jpg", "Bathroom 1", "बाथरूम 1"],
+  ["bathroom-2.jpg", "Bathroom 2", "बाथरूम 2"],
+  ["bathroom-3.jpg", "Bathroom 3", "बाथरूम 3"],
+  ["bathroom-4.jpg", "Bathroom 4", "बाथरूम 4"],
+  ["staircase-2.jpg", "Staircase steps", "सीढ़ियों के कदम"],
+  ["rooftop-tank-room.jpg", "Rooftop, tank room", "छत, टंकी का कमरा"],
+  ["rooftop-open.jpg", "Open rooftop", "खुली छत"],
+];
+
+const HOUSE_IMAGES = HOUSE_PHOTOS.map(([name]) => photoUrl(name));
+const HOUSE_CAPTIONS = HOUSE_PHOTOS.map(([, en, hi]) => ({ en, hi }));
+
+/** Chauhan Complex front elevation (its own Drive file). */
+const COMPLEX_PHOTO_ID = "1uelb1LhV1ldXw4w1VIvqoeucGaXrXHC5";
+const complexPhotoUrl =
+  PHOTO_SOURCE === "drive"
+    ? `https://lh3.googleusercontent.com/d/${COMPLEX_PHOTO_ID}=w1200`
+    : "/photos/chauhan-complex/exterior-front.jpg";
+
 /* ─────────── houses, shops, flats and rentals ───────────
  *
  * Anything that is not a plain land parcel goes here with makeListing().
@@ -554,7 +640,8 @@ const EXTRA: Property[] = [
     mapUrl: "https://maps.app.goo.gl/sQwoThUKZV9BePnm7",
     near: ["Under 50 m from Kanpur Road (NH-27)", "CCS Airport", "Kudrat Vihar Colony"],
     nearHi: ["कानपुर रोड (NH-27) से 50 मीटर से कम", "CCS एयरपोर्ट", "कुदरत विहार कॉलोनी"],
-    images: ["/photos/chauhan-complex/exterior-front.jpg"],
+    images: [complexPhotoUrl],
+    imageCaptions: [{ en: "Exterior front", hi: "बाहरी अगला भाग" }],
     videoUrl: "",
     description: [
       "Chauhan Complex is our own building at Kudrat Vihar Colony, Sarojini Nagar — the same building the office works from. Space here — shop frontage on the ground floor, office floors above, flats, and storage at the back — is offered on rent.",
@@ -608,32 +695,8 @@ const EXTRA: Property[] = [
     mapUrl: "https://maps.app.goo.gl/atnGyagJoj9wSYsC8",
     featured: true,
     listedAt: "2026-01-14",
-    images: [
-      "/photos/amausi-house/exterior-front.jpg",
-      "/photos/amausi-house/exterior-front-wide.jpg",
-      "/photos/amausi-house/staircase-1.jpg",
-      "/photos/amausi-house/corridor-1.jpg",
-      "/photos/amausi-house/corridor-2.jpg",
-      "/photos/amausi-house/kitchen-1.jpg",
-      "/photos/amausi-house/kitchen-2.jpg",
-      "/photos/amausi-house/kitchen-3.jpg",
-      "/photos/amausi-house/kitchen-4.jpg",
-      "/photos/amausi-house/room-1.jpg",
-      "/photos/amausi-house/room-2.jpg",
-      "/photos/amausi-house/room-3.jpg",
-      "/photos/amausi-house/room-4.jpg",
-      "/photos/amausi-house/room-5.jpg",
-      "/photos/amausi-house/room-6.jpg",
-      "/photos/amausi-house/room-7.jpg",
-      "/photos/amausi-house/room-8.jpg",
-      "/photos/amausi-house/bathroom-1.jpg",
-      "/photos/amausi-house/bathroom-2.jpg",
-      "/photos/amausi-house/bathroom-3.jpg",
-      "/photos/amausi-house/bathroom-4.jpg",
-      "/photos/amausi-house/staircase-2.jpg",
-      "/photos/amausi-house/rooftop-tank-room.jpg",
-      "/photos/amausi-house/rooftop-open.jpg",
-    ],
+    images: HOUSE_IMAGES,
+    imageCaptions: HOUSE_CAPTIONS,
     videoUrl: "https://www.youtube.com/watch?v=RksLCHpM5TE",
     near: ["CCS Airport", "TS Mishra Medical College", "Sainik School"],
     nearHi: ["CCS एयरपोर्ट", "टी.एस. मिश्रा मेडिकल कॉलेज", "सैनिक स्कूल"],

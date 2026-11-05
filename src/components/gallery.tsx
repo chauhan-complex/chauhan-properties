@@ -5,26 +5,30 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Icon } from "./icons";
 import { useLang } from "./lang-provider";
 import { cn, isDirectVideo, youtubeId } from "@/lib/utils";
-import { captionFromFilename, videoList } from "@/lib/media";
+import { captionFromFilename, isOpaqueUrl, videoList } from "@/lib/media";
 
 interface GalleryProps {
   images: string[];
   videoUrl?: string | null;
   title: string;
+  /** Explicit captions, used when the filenames are opaque (e.g. Google Drive URLs). */
+  captions?: Array<{ en: string; hi: string }>;
 }
 
 type Media = { type: "image" | "video"; src: string; caption: string };
 
-export default function Gallery({ images, videoUrl, title }: GalleryProps) {
+export default function Gallery({ images, videoUrl, title, captions }: GalleryProps) {
   const { t, lang } = useLang();
 
   const videos = videoList(videoUrl);
   const photoMedia: Media[] = images
     .filter(Boolean)
-    .map((src) => ({
+    .map((src, i) => ({
       type: "image" as const,
       src,
-      caption: captionFromFilename(src, lang).full,
+      caption:
+        captions?.[i]?.[lang] ??
+        (isOpaqueUrl(src) ? "" : captionFromFilename(src, lang).full),
     }));
   const videoMedia: Media[] = videos.map((src, i) => ({
     type: "video" as const,
