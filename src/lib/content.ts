@@ -109,7 +109,7 @@ export const FAQS = [
     a: "Every listing here has already been through our verification: khatauni and khesra from the revenue department, the registry chain for the last thirty years, mutation in the seller's name, an encumbrance check and, for plots, the LDA or colony sanction plan. We hand you a written summary before you pay a token.",
   },
   {
-    q: "Do you deal in villages outside your main belt?",
+    q: "Do you deal in areas outside your main belt?",
     a: "Our belt is Sarojini Nagar block — Amausi, Gauri, Miranpur Pinwat, Aurawan and Piparsand — and that is where almost everything we handle sits. If your land is in a neighbouring tehsil, call and tell us where; we will say plainly whether we know that area well enough to price it. For agricultural land we follow the UP Revenue Code rules on who can buy.",
   },
   {
@@ -126,11 +126,11 @@ export const FAQS = [
   },
   {
     q: "You handle 146 properties but only 9 are listed here. Why?",
-    a: "Only nine land parcels are published at the moment — in Amausi, Miranpur Pinwat, Aurawan and Piparsand. The rest, including houses, buildings, apartments, rentals and other land, are shared on a call or in person because most owners do not want their property advertised openly. Tell us the village and your budget and we will send whatever is available.",
+    a: "Only nine land parcels are published at the moment — in Amausi, Gauri, Miranpur Pinwat, Aurawan and Piparsand. The rest, including houses, buildings, apartments, rentals and other land, are shared on a call or in person because most owners do not want their property advertised openly. Tell us the area and your budget and we will send whatever is available.",
   },
   {
     q: "Some listings have no photographs. Why?",
-    a: "For most of the land we publish only the village and the rate, because that is what the owner has agreed to. Real photographs, the khesra extract and a video walkthrough are shared once we have spoken — and a site visit is arranged, usually the same day. We would rather show you the ground than a picture.",
+    a: "For most of the land we publish only the area and the rate, because that is what the owner has agreed to. Real photographs, the khesra extract and a video walkthrough are shared once we have spoken — and a site visit is arranged, usually the same day. We would rather show you the ground than a picture.",
   },
   {
     q: "The rate is quoted per square foot. What will the total come to?",
@@ -175,3 +175,13 @@ export const CATEGORY_ICONS: Record<string, IconKey> = {
   warehouse: "warehouse",
   other: "plot",
 };
+
+/** What the owner handles personally — there is no team, just him. */
+export const OWNER_DUTIES = [
+  "Answers every call himself, and does every negotiation",
+  "Reads the papers — khatauni, khesra, registry chain, mutation",
+  "Drives you to the site and walks the boundaries with you",
+  "Arranges the amin, the measurement and the boundary marking",
+  "Works out stamp duty and fixes the sub-registrar appointment",
+  "Keeps the file until mutation and possession are complete",
+];

@@ -200,6 +200,31 @@ export default async function PropertyPage({ params }: { params: Promise<Params>
               </ul>
             </Reveal>
 
+            {property.near.length || property.nearHi.length ? (
+              <Reveal delay={170} className="mt-10">
+                <h2 className="font-display text-[1.5rem] text-ink">
+                  <Bi en="What it is near" hi="आसपास क्या है" />
+                </h2>
+                <p className="mt-2 max-w-3xl text-[0.92rem] leading-relaxed text-stone">
+                  <Bi
+                    en="These are the landmarks the area is priced against — the circle rate for a plot here is worked out from what surrounds it, and they are also what most buyers search for."
+                    hi="इन्हीं स्थलों के आधार पर इस इलाके का भाव और सर्किल रेट तय होता है, और ज़्यादातर खरीदार इन्हीं को देखकर ज़मीन ढूँढ़ते हैं।"
+                  />
+                </p>
+                <ul className="mt-5 flex flex-wrap gap-2.5">
+                  {property.near.map((place, index) => (
+                    <li
+                      key={place}
+                      className="flex items-center gap-2 rounded-full border border-line bg-cream px-4 py-2 text-[0.88rem] text-ink/85 transition-colors hover:border-brass"
+                    >
+                      <Icon name="pin" size={14} className="text-brass" />
+                      <Bi en={place} hi={property.nearHi[index] ?? place} />
+                    </li>
+                  ))}
+                </ul>
+              </Reveal>
+            ) : null}
+
             <Reveal delay={180} className="mt-12">
               <div className="flex flex-wrap items-end justify-between gap-4">
                 <div>

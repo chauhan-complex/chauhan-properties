@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Counter, Reveal } from "@/components/primitives";
 import { Icon } from "@/components/icons";
-import AreaMap from "@/components/area-map";
+import { AreaMapBilingual } from "@/components/area-map";
 import { Bi, dualT } from "@/lib/dual";
-import { HI_JOURNEY, HI_TEAM_ROLES, HI_VALUES } from "@/lib/content-hi";
+import { HI_JOURNEY, HI_OWNER_DUTIES, HI_VALUES } from "@/lib/content-hi";
+import { OWNER_DUTIES } from "@/lib/content";
 import { SERVICE_AREAS, SITE } from "@/data/site";
 import { getStats } from "@/lib/data";
 import { telLink, whatsappLink } from "@/lib/utils";
@@ -38,23 +39,6 @@ const VALUES_EN = [
   },
 ];
 
-const TEAM_EN = [
-  {
-    name: "Owner & principal dealer",
-    body: "Handles every negotiation personally, verifies titles, and decides what goes on this website.",
-  },
-  {
-    name: "Office desk & files",
-    body: "Maintains the ledger of listings, client files, agreement drafts, stamp duty calculations and registry appointments.",
-  },
-  {
-    name: "Site & measurement",
-    body: "Photographs and films properties, arranges the amin, accompanies site visits and supervises boundary marking.",
-  },
-];
-
-const TEAM_ICONS = ["ledger", "inbox", "ruler"];
-
 export default function AboutPage() {
   const t = dualT;
   const stats = getStats();
@@ -67,10 +51,10 @@ export default function AboutPage() {
   const journeyEn = [
     {
       title: "A desk at Sarojini Nagar",
-      body: "Chauhan Properties opens on the Kanpur Road side of Lucknow with a ledger, a scooter and plots in the villages around Amausi, Gauri and Piparsand. Most clients are families selling an ancestral house or buying their first plot.",
+      body: "Chauhan Properties opens on the Kanpur Road side of Lucknow with a ledger, a scooter and plots around Amausi, Gauri and Piparsand. Most clients are families selling an ancestral house or buying their first plot.",
     },
     {
-      title: "The village belt becomes the specialty",
+      title: "This belt becomes the specialty",
       body: "Miranpur Pinwat, Aurawan and the fields around them — bigha, biswa and khesra work that most city dealers avoid. Amin measurements and boundary marking become part of the service.",
     },
     {
@@ -79,7 +63,7 @@ export default function AboutPage() {
     },
     {
       title: `${SITE.portfolioTotal} properties, one ledger`,
-      body: "Today the desk works with owners across five villages. Most of what we handle is never advertised — it is shared on a call, which is why this website publishes only a few listings and asks you to phone for the rest.",
+      body: "Today the desk works with owners across all five areas. Most of what we handle is never advertised — it is shared on a call, which is why this website publishes only a few listings and asks you to phone for the rest.",
     },
   ];
 
@@ -87,7 +71,7 @@ export default function AboutPage() {
     <>
       <section className="relative overflow-hidden border-b border-line bg-ink py-16 text-cream md:py-20">
         <div className="absolute inset-0 opacity-[0.22]">
-          <AreaMap tone="dark" compact />
+          <AreaMapBilingual tone="dark" compact />
         </div>
         <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/90 to-ink/40" />
         <div className="relative mx-auto max-w-[86rem] px-5 md:px-6">
@@ -118,7 +102,7 @@ export default function AboutPage() {
               <div className="relative">
                 <div className="absolute -top-4 -right-4 h-full w-full rounded-[3px] border border-brass/40" />
                 <div className="relative overflow-hidden rounded-[3px] border border-line bg-moss/10 p-5">
-                  <AreaMap tone="light" />
+                  <AreaMapBilingual tone="light" />
                   <p className="mt-3 text-center text-[0.76rem] tracking-[0.18em] text-stone uppercase">
                     <Bi en="The belt we work in" hi="हमारा कार्यक्षेत्र" />
                   </p>
@@ -236,26 +220,54 @@ export default function AboutPage() {
           </Reveal>
 
           <div className="space-y-4">
-            {TEAM_EN.map((member, index) => (
-              <Reveal key={member.name} delay={index * 80}>
-                <div className="group flex gap-5 rounded-[3px] border border-line bg-cream p-6 transition-all duration-400 hover:-translate-y-1 hover:border-brass/60">
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-moss text-cream">
-                    <Icon name={TEAM_ICONS[index]} size={20} strokeWidth={1.4} />
+            <Reveal delay={80}>
+              <div className="rounded-[3px] border border-line bg-cream p-7">
+                <div className="flex items-center gap-4">
+                  <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-moss font-display text-[1.5rem] text-cream">
+                    {SITE.ownerName.charAt(0)}
                   </span>
                   <div>
-                    <p className="text-[0.66rem] tracking-[0.2em] text-brass uppercase">
-                      {index === 0 ? SITE.ownerName : <Bi en={`Member ${index + 1}`} hi={`सदस्य ${index + 1}`} />}
-                    </p>
-                    <h3 className="mt-1.5 font-display text-[1.22rem] leading-snug text-ink">
-                      <Bi en={member.name} hi={HI_TEAM_ROLES[index]?.name ?? member.name} />
+                    <h3 className="font-display text-[1.35rem] leading-tight text-ink">
+                      {SITE.ownerName}
                     </h3>
-                    <p className="mt-2 text-[0.92rem] leading-relaxed text-stone">
-                      <Bi en={member.body} hi={HI_TEAM_ROLES[index]?.body ?? member.body} />
+                    <p className="mt-1 text-[0.72rem] tracking-[0.18em] text-brass uppercase">
+                      <Bi en={SITE.ownerRole} hi={SITE.ownerRoleHi} />
                     </p>
                   </div>
                 </div>
-              </Reveal>
-            ))}
+
+                <p className="mt-5 text-[0.93rem] leading-relaxed text-stone">
+                  <Bi
+                    en="Everything below is done by him personally. There is no second number to call and no one else who will show you the property."
+                    hi="नीचे लिखा सारा काम वे खुद करते हैं। न कोई दूसरा नंबर है, न कोई और व्यक्ति जो आपको प्रॉपर्टी दिखाएगा।"
+                  />
+                </p>
+
+                <ul className="mt-5 space-y-2.5 border-t border-line pt-5">
+                  {OWNER_DUTIES.map((duty, index) => (
+                    <li key={duty} className="flex items-start gap-2.5 text-[0.9rem] text-ink/85">
+                      <Icon name="check" size={15} className="mt-0.5 shrink-0 text-moss-soft" />
+                      <Bi en={duty} hi={HI_OWNER_DUTIES[index] ?? duty} />
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-6 flex flex-wrap gap-3 border-t border-line pt-5">
+                  <a
+                    href={telLink(SITE.phone)}
+                    className="inline-flex items-center gap-2 rounded-full bg-moss px-5 py-2.5 text-[0.75rem] font-bold tracking-[0.14em] text-cream uppercase transition-colors hover:bg-ink"
+                  >
+                    <Icon name="phone" size={15} /> {SITE.phone}
+                  </a>
+                  <a
+                    href={`mailto:${SITE.email}`}
+                    className="inline-flex items-center gap-2 rounded-full border border-line px-5 py-2.5 text-[0.75rem] font-semibold tracking-[0.14em] text-ink uppercase transition-colors hover:border-moss"
+                  >
+                    <Icon name="mail" size={15} /> {SITE.email}
+                  </a>
+                </div>
+              </div>
+            </Reveal>
           </div>
         </div>
       </section>

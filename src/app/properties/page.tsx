@@ -54,7 +54,7 @@ export default function PropertiesPage() {
             <div className="flex gap-8">
               <Stat value={stats.total} labelEn="published" labelHi="प्रकाशित" />
               <Stat value={SITE.portfolioTotal} labelEn="in hand" labelHi="कुल प्रॉपर्टी" />
-              <Stat value={SERVICE_AREAS.length} labelEn="villages" labelHi="गाँव" />
+              <Stat value={SERVICE_AREAS.length} labelEn="areas" labelHi="इलाके" />
             </div>
           </Reveal>
         </div>

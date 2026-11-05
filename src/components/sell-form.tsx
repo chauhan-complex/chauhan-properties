@@ -59,7 +59,7 @@ export default function SellForm() {
     `${lang === "hi" ? "मोबाइल" : "Mobile"}: ${form.phone}`,
     form.email ? `${lang === "hi" ? "ईमेल" : "Email"}: ${form.email}` : "",
     `${lang === "hi" ? "प्रकार" : "Type"}: ${categoryLabel}`,
-    `${lang === "hi" ? "इलाका / गाँव" : "Locality / village"}: ${form.locality}`,
+    `${lang === "hi" ? "इलाका" : "Locality"}: ${form.locality}`,
     form.area ? `${lang === "hi" ? "रकबा" : "Area"}: ${form.area} ${lang === "hi" ? UNIT_HI[form.areaUnit] : form.areaUnit}` : "",
     form.price ? `${lang === "hi" ? "अपेक्षित दाम" : "Expected price"}: ${form.price}` : "",
     papers.length ? `${lang === "hi" ? "कागज़" : "Papers"}: ${papers.map((p) => t(`sell.paper.${p}`)).join(", ")}` : "",

@@ -6,13 +6,13 @@ import { HI_FAQS, HI_MARQUEE_WORDS, HI_PROCESS, HI_SERVICES, HI_TICKER, HI_WHY_P
 import PropertyCard from "@/components/property-card";
 import QuickSearch from "@/components/quick-search";
 import FaqAccordion from "@/components/faq-accordion";
-import AreaMap, { AREAS } from "@/components/area-map";
+import { AreaMapBilingual, AREAS } from "@/components/area-map";
 import { Counter, LineMask, Marquee, Reveal, ScrambleWords, SectionHeading } from "@/components/primitives";
 import { Icon } from "@/components/icons";
 import { Bi, dualT } from "@/lib/dual";
 import { telLink, whatsappLink } from "@/lib/utils";
 import { categoryOptions, localityName } from "@/lib/hi";
-import { SERVICE_AREAS } from "@/data/site";
+import { SERVICE_AREAS, areaRateText } from "@/data/site";
 
 const ROTATING_EN = SERVICE_AREAS;
 // Module-level so the array identity is stable — ScrambleWords restarts if it changes per render.
@@ -52,7 +52,7 @@ export default function HomePage() {
   const years = Math.max(1, new Date().getFullYear() - since);
   const categories = [
     { value: "farmhouse", en: "Farmhouses", hi: "फार्महाउस", enBlurb: "Weekend homes & orchards", hiBlurb: "वीकेंड होम और बाग़" },
-    { value: "plot", en: "Plots & Land", hi: "प्लॉट और ज़मीन", enBlurb: "Village land & road-side plots", hiBlurb: "गाँव की ज़मीन और रोड-साइड प्लॉट" },
+    { value: "plot", en: "Plots & Land", hi: "प्लॉट और ज़मीन", enBlurb: "Residential & road-side plots", hiBlurb: "आवासीय और रोड-साइड प्लॉट" },
     { value: "house", en: "Houses", hi: "मकान", enBlurb: "Listings coming soon", hiBlurb: "जल्द जोड़ी जाएगी" },
     { value: "apartment", en: "Flats", hi: "फ्लैट", enBlurb: "Listings coming soon", hiBlurb: "जल्द जोड़ी जाएगी" },
     { value: "shop", en: "Shops", hi: "दुकानें", enBlurb: "Listings coming soon", hiBlurb: "जल्द जोड़ी जाएगी" },
@@ -66,7 +66,7 @@ export default function HomePage() {
   const statsRow = [
     { key: "total", value: SITE.portfolioTotal, suffix: "", icon: "ledger", labelEn: "Properties in hand", labelHi: "कुल प्रॉपर्टी" },
     { key: "published", value: stats.total, suffix: "", icon: "spark", labelEn: "Live listings", labelHi: "उपलब्ध प्रॉपर्टी" },
-    { key: "areas", value: SERVICE_AREAS.length, suffix: "", icon: "map", labelEn: "Villages we cover", labelHi: "गाँव / इलाके" },
+    { key: "areas", value: SERVICE_AREAS.length, suffix: "", icon: "map", labelEn: "Areas we cover", labelHi: "इलाके" },
     { key: "years", value: years, suffix: "+", icon: "clock", labelEn: "Years in the market", labelHi: "साल का अनुभव" },
   ];
 
@@ -77,7 +77,7 @@ export default function HomePage() {
         <div className="absolute inset-0 -z-10">
           <div className="absolute inset-0 bg-[radial-gradient(120%_90%_at_15%_10%,#1d4b3a_0%,#0c1613_55%,#08100d_100%)]" />
           <div className="absolute inset-0 opacity-[0.5]">
-            <AreaMap tone="dark" compact />
+            <AreaMapBilingual tone="dark" compact />
           </div>
           <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/30" />
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-ink/70" />
@@ -271,8 +271,8 @@ export default function HomePage() {
               </h2>
               <p className="mt-5 max-w-xl text-[0.98rem] leading-relaxed text-cream/70">
                 <Bi
-                  en="Most owners do not want their property advertised openly, so the rest is shared on a call or at the office. Below are the live per sq.ft rates in the villages where we currently have land available."
-                  hi="ज़्यादातर मालिक नहीं चाहते कि उनकी प्रॉपर्टी खुले तौर पर विज्ञापित हो। इसलिए बाकी प्रॉपर्टी कॉल पर या ऑफिस आकर बताई जाती है। नीचे उन गाँवों का भाव है जिनमें इस समय ज़मीन उपलब्ध है।"
+                  en="Most owners do not want their property advertised openly, so the rest is shared on a call or at the office. Below are the live per sq.ft rates for each area, and what each one sits near — those landmarks are what the circle rate is worked out from."
+                  hi="ज़्यादातर मालिक नहीं चाहते कि उनकी प्रॉपर्टी खुले तौर पर विज्ञापित हो। इसलिए बाकी प्रॉपर्टी कॉल पर या ऑफिस आकर बताई जाती है। नीचे हर इलाके का भाव प्रति वर्ग फुट है, और वह किसके पास है — सर्किल रेट इन्हीं स्थलों के आधार पर तय होता है।"
                 />
               </p>
 
@@ -281,7 +281,7 @@ export default function HomePage() {
                   <thead className="bg-ink/40 text-[0.66rem] tracking-[0.18em] text-cream/60 uppercase">
                     <tr>
                       <th className="px-4 py-3 font-semibold">
-                        <Bi en="Village" hi="गाँव / इलाका" />
+                        <Bi en="Area & what it is near" hi="इलाका और आसपास क्या है" />
                       </th>
                       <th className="px-4 py-3 font-semibold">
                         <Bi en="Rate (₹/sq.ft)" hi="भाव (₹/वर्ग फुट)" />
@@ -294,22 +294,30 @@ export default function HomePage() {
                   <tbody className="divide-y divide-cream/10">
                     {AREAS.map((area) => {
                       const row = rates.get(area.name);
-                      const rateText = row
-                        ? row.min === row.max
-                          ? `₹${row.min.toLocaleString("en-IN")}`
-                          : `₹${row.min.toLocaleString("en-IN")} – ₹${row.max.toLocaleString("en-IN")}`
-                        : null;
+                      const nearEn = area.near.join(" · ");
+                      const nearHi = area.nearHi.join(" · ");
                       return (
                         <tr key={area.name} className="transition-colors hover:bg-ink/25">
-                          <td className="px-4 py-3">
-                            <Link href={`/properties/?locality=${encodeURIComponent(area.name)}`} className="font-display text-[1.02rem] text-cream hover:text-brass-soft">
-                              <Bi en={area.name} hi={area.hi} />
+                          <td className="px-4 py-3.5">
+                            <Link
+                              href={`/properties/?locality=${encodeURIComponent(area.name)}`}
+                              className="font-display text-[1.02rem] text-cream hover:text-brass-soft"
+                            >
+                              <Bi en={area.name} hi={area.nameHi} />
                             </Link>
+                            {nearEn || nearHi ? (
+                              <span className="mt-1 block text-[0.74rem] leading-snug text-cream/50">
+                                <Bi en={nearEn ? `near ${nearEn}` : ""} hi={nearHi ? `पास में ${nearHi}` : ""} />
+                              </span>
+                            ) : null}
                           </td>
-                          <td className="px-4 py-3 text-brass-soft tnum">
-                            <Bi en={rateText ?? "On request"} hi={rateText ? `${rateText} प्रति वर्ग फुट` : "भाव पूछिए"} />
+                          <td className="px-4 py-3.5 whitespace-nowrap text-brass-soft tnum">
+                            <Bi
+                              en={row ? areaRateText(area, "en") : "On request"}
+                              hi={row ? areaRateText(area, "hi") : "भाव पूछिए"}
+                            />
                           </td>
-                          <td className="px-4 py-3 text-right text-cream/75 tnum">{row?.count ?? "—"}</td>
+                          <td className="px-4 py-3.5 text-right text-cream/75 tnum">{row?.count ?? "—"}</td>
                         </tr>
                       );
                     })}
@@ -330,12 +338,12 @@ export default function HomePage() {
                 </a>
                 <Bi
                   en={
-                    <a href={whatsappLink(SITE.whatsapp, "Namaste! I need a property that is not listed on the website. Sharing the village and budget.")} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2.5 rounded-full border border-cream/30 px-7 py-3.5 text-[0.8rem] font-semibold tracking-[0.16em] uppercase transition-colors hover:border-brass-soft hover:text-brass-soft">
+                    <a href={whatsappLink(SITE.whatsapp, "Namaste! I need a property that is not listed on the website. Sharing the area and budget.")} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2.5 rounded-full border border-cream/30 px-7 py-3.5 text-[0.8rem] font-semibold tracking-[0.16em] uppercase transition-colors hover:border-brass-soft hover:text-brass-soft">
                       <Icon name="whatsapp" size={16} /> WhatsApp us
                     </a>
                   }
                   hi={
-                    <a href={whatsappLink(SITE.whatsapp, "नमस्ते! मुझे वेबसाइट पर न लगी कोई प्रॉपर्टी चाहिए। गाँव और बजट बता रहा हूँ।")} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2.5 rounded-full border border-cream/30 px-7 py-3.5 text-[0.8rem] font-semibold tracking-[0.16em] uppercase transition-colors hover:border-brass-soft hover:text-brass-soft">
+                    <a href={whatsappLink(SITE.whatsapp, "नमस्ते! मुझे वेबसाइट पर न लगी कोई प्रॉपर्टी चाहिए। इलाका और बजट बता रहा हूँ।")} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2.5 rounded-full border border-cream/30 px-7 py-3.5 text-[0.8rem] font-semibold tracking-[0.16em] uppercase transition-colors hover:border-brass-soft hover:text-brass-soft">
                       <Icon name="whatsapp" size={16} /> व्हाट्सएप करें
                     </a>
                   }
@@ -345,7 +353,7 @@ export default function HomePage() {
 
             <Reveal delay={120}>
               <div className="rounded-[3px] border border-cream/15 bg-ink/35 p-4 backdrop-blur-sm">
-                <AreaMap tone="dark" />
+                <AreaMapBilingual tone="dark" />
               </div>
             </Reveal>
           </div>
@@ -403,7 +411,7 @@ export default function HomePage() {
               <div className="relative">
                 <div className="absolute -top-4 -left-4 h-full w-full rounded-[3px] border border-brass/40" />
                 <div className="relative overflow-hidden rounded-[3px] border border-cream/15 bg-moss/20 p-5">
-                  <AreaMap tone="dark" />
+                  <AreaMapBilingual tone="dark" />
                 </div>
                 <div className="absolute -right-5 -bottom-6 hidden rotate-[-8deg] rounded-full border border-brass/50 bg-ink px-5 py-5 text-center md:block">
                   <p className="font-display text-[1.7rem] leading-none text-brass-soft">{years}+</p>
@@ -582,8 +590,8 @@ export default function HomePage() {
             </h2>
             <p className="mt-4 max-w-xl text-cream/65">
               <Bi
-                en={`We hold ${SITE.portfolioTotal} properties and only ${stats.total} are published here. Tell us the village, budget and requirement — you will have an answer within a day.`}
-                hi={`हमारे पास ${SITE.portfolioTotal} प्रॉपर्टी हैं और यहाँ सिर्फ़ ${stats.total} लगी हैं। गाँव, बजट और ज़रूरत बताइए — एक दिन में जवाब।`}
+                en={`We hold ${SITE.portfolioTotal} properties and only ${stats.total} are published here. Tell us the area, budget and requirement — you will have an answer within a day.`}
+                hi={`हमारे पास ${SITE.portfolioTotal} प्रॉपर्टी हैं और यहाँ सिर्फ़ ${stats.total} लगी हैं। इलाका, बजट और ज़रूरत बताइए — एक दिन में जवाब।`}
               />
             </p>
             <div className="mt-8 flex flex-wrap gap-3">

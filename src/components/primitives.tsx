@@ -93,8 +93,11 @@ export function LineMask({
   );
 }
 
-const GLYPHS_LATIN = "ABCDEFGHIJKLMNOPQRSTUVWXYZ//<>*#$%&";
-const GLYPHS_DEVANAGARI = "कखगघचछजझटठडढतथदधनपफबभमयरलवशषसह ािीुूृेैोौंःँ";
+/* Deliberately excludes the widest letters (M, W) so a scrambled frame is never
+   wider than the finished word, and excludes standalone Devanagari matras, which
+   would combine with the previous glyph and change width mid-animation. */
+const GLYPHS_LATIN = "ACDEFGHIJKLNOPQRSTUVXYZ/*<>#$%";
+const GLYPHS_DEVANAGARI = "कखगघचछजझटठडढतथदधनपफबभमयरलवशषसहअआइईउऊएऐओऔ";
 
 /** Scramble with the right alphabet — Devanagari words must not decode through Latin letters. */
 function pickGlyphs(target: string) {
@@ -158,10 +161,27 @@ export function ScrambleWords({
     return () => clearInterval(timer);
   }, [interval, words.length]);
 
+  /* The widest word, rendered invisibly, holds the box open. Without it the
+     heading reflows every time a shorter or longer word cycles in — that is what
+     made the whole page shift for a frame. */
+  const longest = useMemo(
+    () => words.reduce((a, b) => (b.length > a.length ? b : a), ""),
+    [words],
+  );
+
   return (
-    <span ref={hostRef} className={className} aria-live="polite">
-      <span className="sr-only">{words[index]}</span>
-      <span aria-hidden="true">{reduced ? words[index] : text}</span>
+    <span
+      ref={hostRef}
+      className={cn("relative inline-block align-baseline whitespace-nowrap", className)}
+      aria-live="polite"
+    >
+      <span aria-hidden="true" className="invisible block select-none">
+        {longest}
+      </span>
+      <span className="absolute inset-x-0 top-0 block">
+        <span className="sr-only">{words[index]}</span>
+        <span aria-hidden="true">{reduced ? words[index] : text}</span>
+      </span>
     </span>
   );
 }

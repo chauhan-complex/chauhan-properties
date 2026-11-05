@@ -1,4 +1,4 @@
-import { LISTINGS, SITE, type Property, type SiteSettings } from "@/data/site";
+import { AREAS, LISTINGS, SITE, type Property, type SiteSettings } from "@/data/site";
 
 /**
  * Read-only data layer over `src/data/site.ts`.
@@ -93,13 +93,13 @@ export function getPropertyBySlug(slug: string): Property | undefined {
 }
 
 export function getSimilar(property: Property, limit = 3): Property[] {
-  const sameVillage = LISTINGS.filter(
+  const sameArea = LISTINGS.filter(
     (p) => p.slug !== property.slug && p.locality === property.locality,
   );
   const others = LISTINGS.filter(
     (p) => p.slug !== property.slug && p.locality !== property.locality,
   );
-  return [...sameVillage, ...others].slice(0, limit);
+  return [...sameArea, ...others].slice(0, limit);
 }
 
 export function getStats() {
@@ -122,19 +122,33 @@ export function getCategoryCounts(): Record<string, number> {
   }, {});
 }
 
-/** Minimum and maximum quoted rate per village, for the rate card. */
+/**
+ * The rate card. Area rates come from AREAS in src/data/site.ts (what the whole
+ * area trades at, and what circle rate is worked from); the parcel count is how
+ * many individual listings are published here.
+ */
 export function rateCard() {
-  const rows = new Map<string, { min: number; max: number; count: number }>();
+  const rows = new Map<string, { min: number; max: number; count: number; near: string[]; nearHi: string[] }>();
+  for (const area of AREAS) {
+    rows.set(area.name, {
+      min: area.rateMin,
+      max: area.rateMax,
+      count: 0,
+      near: area.near,
+      nearHi: area.nearHi,
+    });
+  }
   for (const property of LISTINGS) {
-    if (property.priceBasis !== "per_sqft") continue;
-    const rate = Number(property.price);
     const current = rows.get(property.locality);
-    if (!current) rows.set(property.locality, { min: rate, max: rate, count: 1 });
-    else {
-      current.min = Math.min(current.min, rate);
-      current.max = Math.max(current.max, rate);
-      current.count += 1;
-    }
+    if (current) current.count += 1;
+    else
+      rows.set(property.locality, {
+        min: Number(property.price),
+        max: Number(property.price),
+        count: 1,
+        near: property.near,
+        nearHi: property.nearHi,
+      });
   }
   return rows;
 }

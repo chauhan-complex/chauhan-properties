@@ -280,7 +280,7 @@ export const CATEGORIES: Array<{
   blurbHi: string;
 }> = [
   { value: "farmhouse", label: "Farmhouses", blurb: "Weekend homes & orchards", hi: "फार्महाउस", blurbHi: "वीकेंड होम और बाग़" },
-  { value: "plot", label: "Plots & Land", blurb: "Village land & road-side plots", hi: "प्लॉट और ज़मीन", blurbHi: "गाँव की ज़मीन और रोड-साइड प्लॉट" },
+  { value: "plot", label: "Plots & Land", blurb: "Residential & road-side plots", hi: "प्लॉट और ज़मीन", blurbHi: "आवासीय और रोड-साइड प्लॉट" },
   { value: "agricultural_land", label: "Agricultural Land", blurb: "Bigha / acre parcels", hi: "कृषि भूमि", blurbHi: "बीघा / एकड़ पार्सल" },
   { value: "house", label: "Houses", blurb: "Independent, owner-built", hi: "मकान", blurbHi: "स्वतंत्र, मालिक द्वारा बनवाए" },
   { value: "apartment", label: "Flats", blurb: "1–4 BHK on sale & rent", hi: "फ्लैट", blurbHi: "1–4 BHK बिक्री व किराये पर" },

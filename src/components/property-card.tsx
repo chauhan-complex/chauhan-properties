@@ -6,6 +6,13 @@ import type { Property } from "@/data/site";
 import { cn } from "@/lib/utils";
 import { areaText, categoryText, localityName, priceText, purposeText } from "@/lib/hi";
 
+/** Cards have limited room — show three landmarks and an ellipsis. */
+function shortList(items: string[], max = 3) {
+  if (!items.length) return "";
+  if (items.length <= max) return items.join(", ");
+  return `${items.slice(0, max).join(", ")}…`;
+}
+
 const purposeStyles: Record<string, string> = {
   sale: "bg-moss text-cream",
   rent: "bg-clay text-cream",
@@ -123,6 +130,16 @@ export default function PropertyCard({
             hi={`${localityName(property.locality, "hi")}, लखनऊ`}
           />
         </p>
+
+        {property.near.length || property.nearHi.length ? (
+          <p className="mt-1.5 flex items-start gap-1.5 text-[0.8rem] leading-snug text-stone/90">
+            <Icon name="map" size={14} className="mt-0.5 shrink-0 text-moss-soft" />
+            <Bi
+              en={`near ${shortList(property.near)}`}
+              hi={`पास में ${shortList(property.nearHi)}`}
+            />
+          </p>
+        ) : null}
 
         <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line pt-3.5 text-[0.78rem] text-stone">
           {property.bedrooms ? (
