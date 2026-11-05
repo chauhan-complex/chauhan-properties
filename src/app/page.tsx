@@ -50,17 +50,21 @@ export default function HomePage() {
 
   const since = Number(SITE.sinceYear) || 2005;
   const years = Math.max(1, new Date().getFullYear() - since);
+  /* Blurbs say where the stock actually is. Shops, flats, offices, buildings and
+     godowns are all supplied by the one Chauhan Complex listing (it `covers`
+     those categories), so they are real options — not "coming soon". */
   const categories = [
-    { value: "farmhouse", en: "Farmhouses", hi: "फार्महाउस", enBlurb: "Weekend homes & orchards", hiBlurb: "वीकेंड होम और बाग़" },
-    { value: "plot", en: "Plots & Land", hi: "प्लॉट और ज़मीन", enBlurb: "Residential & road-side plots", hiBlurb: "आवासीय और रोड-साइड प्लॉट" },
-    { value: "house", en: "Houses", hi: "मकान", enBlurb: "Listings coming soon", hiBlurb: "जल्द जोड़ी जाएगी" },
-    { value: "apartment", en: "Flats", hi: "फ्लैट", enBlurb: "Listings coming soon", hiBlurb: "जल्द जोड़ी जाएगी" },
-    { value: "shop", en: "Shops", hi: "दुकानें", enBlurb: "Listings coming soon", hiBlurb: "जल्द जोड़ी जाएगी" },
-    { value: "warehouse", en: "Godowns", hi: "गोदाम", enBlurb: "Listings coming soon", hiBlurb: "जल्द जोड़ी जाएगी" },
-    { value: "building", en: "Buildings", hi: "बिल्डिंगें", enBlurb: "Listings coming soon", hiBlurb: "जल्द जोड़ी जाएगी" },
-    { value: "agricultural_land", en: "Agricultural Land", hi: "कृषि भूमि", enBlurb: "Bigha / acre parcels", hiBlurb: "बीघा / एकड़ पार्सल" },
-    { value: "office", en: "Office Space", hi: "ऑफिस स्पेस", enBlurb: "Listings coming soon", hiBlurb: "जल्द जोड़ी जाएगी" },
-    { value: "complex", en: "Complexes", hi: "कॉम्प्लेक्स", enBlurb: "Listings coming soon", hiBlurb: "जल्द जोड़ी जाएगी" },
+    { value: "plot", en: "Plots & Land", hi: "प्लॉट और ज़मीन", enBlurb: "Quoted per sq.ft, with map pins", hiBlurb: "भाव प्रति वर्ग फुट, मैप पिन के साथ" },
+    { value: "farmhouse", en: "Farmhouses", hi: "फार्महाउस", enBlurb: "Farmhouse land at Aurawan", hiBlurb: "औरावां में फार्महाउस ज़मीन" },
+    { value: "house", en: "Houses", hi: "मकान", enBlurb: "Two-storey house at Amausi", hiBlurb: "अमौसी में दोमंज़िला मकान" },
+    { value: "complex", en: "Complexes", hi: "कॉम्प्लेक्स", enBlurb: "Chauhan Complex, Sarojini Nagar", hiBlurb: "चौहान कॉम्प्लेक्स, सरोजिनी नगर" },
+    { value: "shop", en: "Shops", hi: "दुकानें", enBlurb: "At Chauhan Complex, on rent", hiBlurb: "चौहान कॉम्प्लेक्स में, किराये पर" },
+    { value: "showroom", en: "Showrooms", hi: "शोरूम", enBlurb: "At Chauhan Complex, on rent", hiBlurb: "चौहान कॉम्प्लेक्स में, किराये पर" },
+    { value: "office", en: "Office Space", hi: "ऑफिस स्पेस", enBlurb: "Floors at Chauhan Complex", hiBlurb: "चौहान कॉम्प्लेक्स में फ्लोर" },
+    { value: "apartment", en: "Flats", hi: "फ्लैट", enBlurb: "At Chauhan Complex", hiBlurb: "चौहान कॉम्प्लेक्स में" },
+    { value: "warehouse", en: "Godowns", hi: "गोदाम", enBlurb: "Storage at Chauhan Complex", hiBlurb: "चौहान कॉम्प्लेक्स में स्टोरेज" },
+    { value: "building", en: "Buildings", hi: "बिल्डिंगें", enBlurb: "Chauhan Complex itself", hiBlurb: "चौहान कॉम्प्लेक्स स्वयं" },
+    { value: "agricultural_land", en: "Agricultural Land", hi: "कृषि भूमि", enBlurb: "Bigha / acre — call and ask", hiBlurb: "बीघा / एकड़ — कॉल करके पूछिए" },
   ];
 
   const statsRow = [
@@ -392,7 +396,9 @@ export default function HomePage() {
                       <Bi en={cat.en} hi={cat.hi} />
                     </span>
                     <span className="mt-1 block text-[0.76rem] text-stone transition-colors duration-300 group-hover:text-cream/60">
-                      <Bi en={counts[cat.value] ? cat.enBlurb : "Listings coming soon"} hi={counts[cat.value] ? cat.hiBlurb : "जल्द जोड़ी जाएगी"} />
+                      {/* Always show where the stock is; the count above says
+                          whether anything is published right now. */}
+                      <Bi en={cat.enBlurb} hi={cat.hiBlurb} />
                     </span>
                   </span>
                   <span className="absolute bottom-0 left-0 h-px w-0 bg-brass transition-all duration-500 group-hover:w-full" />

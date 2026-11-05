@@ -78,6 +78,12 @@ export interface Property {
   coordsLabel: string;
   videoUrl: string;
   images: string[];
+  /**
+   * Other categories this one listing also answers to. Chauhan Complex is a
+   * single building that supplies shops, offices, flats, godowns and building
+   * space, so filtering by any of those should surface it.
+   */
+  covers?: Category[];
   /** Optional caption per image, used when filenames are opaque (e.g. Drive URLs). */
   imageCaptions?: Array<{ en: string; hi: string }>;
   near: string[];
@@ -626,6 +632,7 @@ const EXTRA: Property[] = [
     locality: "Sarojini Nagar",
     address: "Chauhan Complex, Kudrat Vihar Colony, Sarojini Nagar, Lucknow 226008",
     category: "complex",
+    covers: ["shop", "showroom", "office", "apartment", "building", "warehouse"],
     purpose: "rent",
     price: "",
     priceBasis: "total",

@@ -40,7 +40,10 @@ function priceOf(property: Property, direction: "asc" | "desc") {
 
 function matches(property: Property, filters: PropertyFilters) {
   if (filters.purpose && filters.purpose !== "all" && property.purpose !== filters.purpose) return false;
-  if (filters.category && filters.category !== "all" && property.category !== filters.category) return false;
+  if (filters.category && filters.category !== "all") {
+    const wanted = filters.category as Property["category"];
+    if (property.category !== wanted && !(property.covers ?? []).includes(wanted)) return false;
+  }
   if (filters.locality && filters.locality !== "all" && property.locality !== filters.locality) return false;
   if (filters.featuredOnly && !property.featured) return false;
   if (property.status === "inactive") return false;
@@ -125,8 +128,22 @@ export function getStats() {
 export function getCategoryCounts(): Record<string, number> {
   return LISTINGS.reduce<Record<string, number>>((acc, property) => {
     acc[property.category] = (acc[property.category] ?? 0) + 1;
+    for (const covered of property.covers ?? []) {
+      acc[covered] = (acc[covered] ?? 0) + 1;
+    }
     return acc;
   }, {});
+}
+
+/** Categories with no listing of their own that are still served by another one. */
+export function getCoveredCategories(): Record<string, string[]> {
+  const out: Record<string, string[]> = {};
+  for (const property of LISTINGS) {
+    for (const covered of property.covers ?? []) {
+      (out[covered] ??= []).push(property.slug);
+    }
+  }
+  return out;
 }
 
 /**
