@@ -46,14 +46,14 @@ export default function PropertiesPage() {
               </p>
               <p className="mt-2 max-w-xl text-[0.9rem] text-brass-soft/85">
                 <Bi
-                  en={`We hold ${SITE.portfolioTotal} properties in total and ${stats.total} are published here. Houses, buildings, flats and rentals are being added soon — for the rest, call the office.`}
-                  hi={`हमारे पास कुल ${SITE.portfolioTotal} प्रॉपर्टी हैं, यहाँ ${stats.total} प्रकाशित हैं। मकान, बिल्डिंग, फ्लैट और किराये की प्रॉपर्टी जल्द जुड़ेंगी — बाकी के लिए ऑफिस में कॉल कीजिए।`}
+                  en={`Every listing here is the owner's own property, so you deal with him directly. He owns ${SITE.portfolioTotal} in total and ${stats.total} are published here; houses, buildings and rentals are being added — for the rest, call the office.`}
+                  hi={`यहाँ लगी हर प्रॉपर्टी मालिक की अपनी है, इसलिए बात सीधे उनसे होती है। उनके नाम कुल ${SITE.portfolioTotal} प्रॉपर्टी हैं, यहाँ ${stats.total} प्रकाशित हैं — मकान, बिल्डिंग और किराये की प्रॉपर्टी जुड़ रही हैं, बाकी के लिए ऑफिस में कॉल कीजिए।`}
                 />
               </p>
             </div>
             <div className="flex gap-8">
               <Stat value={stats.total} labelEn="published" labelHi="प्रकाशित" />
-              <Stat value={SITE.portfolioTotal} labelEn="in hand" labelHi="कुल प्रॉपर्टी" />
+              <Stat value={SITE.portfolioTotal} labelEn="he owns" labelHi="उनकी प्रॉपर्टी" />
               <Stat value={SERVICE_AREAS.length} labelEn="areas" labelHi="इलाके" />
             </div>
           </Reveal>

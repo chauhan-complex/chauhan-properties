@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Icon } from "./icons";
 import { useLang } from "./lang-provider";
 import { cn, isDirectVideo, youtubeId } from "@/lib/utils";
+import { captionFromFilename, videoList } from "@/lib/media";
 
 interface GalleryProps {
   images: string[];
@@ -12,20 +13,44 @@ interface GalleryProps {
   title: string;
 }
 
-type Media = { type: "image" | "video"; src: string };
+type Media = { type: "image" | "video"; src: string; caption: string };
 
 export default function Gallery({ images, videoUrl, title }: GalleryProps) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
 
-  const media: Media[] = [
-    ...images.filter(Boolean).map((src) => ({ type: "image" as const, src })),
-    ...(videoUrl ? [{ type: "video" as const, src: videoUrl }] : []),
-  ];
+  const videos = videoList(videoUrl);
+  const photoMedia: Media[] = images
+    .filter(Boolean)
+    .map((src) => ({
+      type: "image" as const,
+      src,
+      caption: captionFromFilename(src, lang).full,
+    }));
+  const videoMedia: Media[] = videos.map((src, i) => ({
+    type: "video" as const,
+    src,
+    caption:
+      videos.length > 1
+        ? lang === "hi"
+          ? `वीडियो टूर ${i + 1}`
+          : `Video tour ${i + 1}`
+        : lang === "hi"
+          ? "पूरा वीडियो टूर"
+          : "Full video tour",
+  }));
 
-  const [index, setIndex] = useState(0);
+  /* Videos come first in the strip so nobody has to hunt through the photos to
+     find them, but the stage opens on the best exterior photo rather than a
+     paused video frame. */
+  const media: Media[] = [...videoMedia, ...photoMedia];
+  const firstPhotoIndex = videoMedia.length;
+
+  const [index, setIndex] = useState(firstPhotoIndex);
   const [lightbox, setLightbox] = useState(false);
   const stripRef = useRef<HTMLDivElement | null>(null);
   const current = media[index] ?? { type: "image", src: "/fallback-property.svg" };
+  const hasVideo = videoMedia.length > 0;
+  const onVideo = current.type === "video";
 
   const go = useCallback(
     (delta: number) => {
@@ -65,7 +90,10 @@ export default function Gallery({ images, videoUrl, title }: GalleryProps) {
   return (
     <>
       <div className="relative">
-        <div className="group relative aspect-4/3 overflow-hidden rounded-[3px] border border-line bg-ink">
+        {/* Fixed-height stage + object-contain: phone photos arrive in mixed
+            orientations; contain guarantees nothing is cropped, and the fixed
+            height guarantees the page below never shifts when you change photo. */}
+        <div className="group relative h-[440px] overflow-hidden rounded-[3px] border border-line bg-ink sm:h-[560px] lg:h-[620px]">
           {current.type === "image" ? (
             <button
               type="button"
@@ -76,11 +104,11 @@ export default function Gallery({ images, videoUrl, title }: GalleryProps) {
               <Image
                 key={current.src}
                 src={current.src}
-                alt={`${title} — ${t("gallery.photoOf")} ${index + 1}`}
+                alt={`${title} — ${current.caption || `${t("gallery.photoOf")} ${index + 1}`}`}
                 fill
                 priority={index === 0}
-                sizes="(max-width: 1024px) 100vw, 62vw"
-                className="object-cover transition-transform duration-[1.6s] ease-out group-hover:scale-[1.04]"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 62vw"
+                className="object-contain"
               />
             </button>
           ) : (
@@ -88,6 +116,39 @@ export default function Gallery({ images, videoUrl, title }: GalleryProps) {
           )}
 
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-ink/70 to-transparent" />
+
+          {/* Always-visible shortcut to the walkthrough — nobody should have to
+              page through 24 photos to discover there is a video. */}
+          {hasVideo && !onVideo ? (
+            <button
+              type="button"
+              onClick={() => setIndex(0)}
+              className="group absolute top-4 left-4 z-10 flex items-center gap-2.5 rounded-full bg-brass px-4 py-2.5 text-[0.76rem] font-bold tracking-[0.14em] text-ink uppercase shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:bg-brass-soft"
+            >
+              <span className="relative flex h-6 w-6 items-center justify-center rounded-full bg-ink text-brass">
+                <span className="absolute inset-0 animate-pulse-ring rounded-full border border-ink" />
+                <Icon name="play" size={13} strokeWidth={1.8} />
+              </span>
+              {lang === "hi" ? "वीडियो टूर देखें" : "Watch the video tour"}
+            </button>
+          ) : null}
+
+          {onVideo ? (
+            <button
+              type="button"
+              onClick={() => setIndex(firstPhotoIndex)}
+              className="absolute top-4 left-4 z-10 flex items-center gap-2 rounded-full bg-ink/70 px-4 py-2.5 text-[0.76rem] font-semibold tracking-[0.14em] text-cream uppercase backdrop-blur transition-colors hover:bg-ink"
+            >
+              <Icon name="photo" size={14} />
+              {lang === "hi" ? "तस्वीरें देखें" : "Back to photos"}
+            </button>
+          ) : null}
+
+          {current.caption ? (
+            <span className="absolute bottom-4 left-4 max-w-[62%] rounded-full bg-ink/70 px-3.5 py-1.5 text-[0.74rem] font-medium text-cream backdrop-blur-sm">
+              {current.caption}
+            </span>
+          ) : null}
 
           <div className="absolute right-4 bottom-4 flex items-center gap-2">
             <span className="rounded-full bg-ink/70 px-3 py-1.5 text-[0.72rem] font-medium text-cream backdrop-blur-sm tnum">
@@ -126,6 +187,8 @@ export default function Gallery({ images, videoUrl, title }: GalleryProps) {
                 data-index={i}
                 role="tab"
                 aria-selected={i === index}
+                aria-label={item.caption || `${title} ${i + 1}`}
+                title={item.caption}
                 onClick={() => setIndex(i)}
                 className={cn(
                   "relative h-[68px] w-[100px] shrink-0 overflow-hidden rounded-[3px] border transition-all duration-300",
@@ -137,8 +200,11 @@ export default function Gallery({ images, videoUrl, title }: GalleryProps) {
                 {item.type === "image" ? (
                   <Image src={item.src} alt="" fill sizes="120px" className="object-cover" />
                 ) : (
-                  <span className="flex h-full w-full items-center justify-center bg-ink text-cream">
-                    <Icon name="play" size={22} className="text-brass-soft" />
+                  <span className="flex h-full w-full flex-col items-center justify-center gap-1 bg-ink text-cream">
+                    <Icon name="play" size={20} className="text-brass-soft" />
+                    <span className="text-[0.55rem] font-bold tracking-[0.16em] text-brass-soft uppercase">
+                      {lang === "hi" ? "वीडियो" : "Video"}
+                    </span>
                   </span>
                 )}
               </button>
@@ -171,7 +237,7 @@ export default function Gallery({ images, videoUrl, title }: GalleryProps) {
             {current.type === "image" ? (
               <Image
                 src={current.src}
-                alt={`${title} — ${t("gallery.photoOf")} ${index + 1}`}
+                alt={`${title} — ${current.caption || `${t("gallery.photoOf")} ${index + 1}`}`}
                 fill
                 sizes="100vw"
                 className="object-contain"

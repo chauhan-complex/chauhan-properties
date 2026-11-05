@@ -11,20 +11,20 @@ import { Counter, LineMask, Marquee, Reveal, ScrambleWords, SectionHeading } fro
 import { Icon } from "@/components/icons";
 import { Bi, dualT } from "@/lib/dual";
 import { telLink, whatsappLink } from "@/lib/utils";
-import { categoryOptions, localityName } from "@/lib/hi";
+import { categoryOptions, listingPriceText, localityName } from "@/lib/hi";
 import { SERVICE_AREAS, areaRateText } from "@/data/site";
 
 const ROTATING_EN = SERVICE_AREAS;
 // Module-level so the array identity is stable — ScrambleWords restarts if it changes per render.
 const ROTATING_HI = SERVICE_AREAS.map((area) => localityName(area, "hi"));
 const TICKER_EN = [
-  "146 properties in hand",
-  "9 published here",
+  "146 properties he owns",
+  "Direct from the owner",
   "Rate quoted per sq.ft",
-  "कागज़ की पूरी जाँच",
+  "कागज़ों की पूरी जाँच",
   "Same-day site visit",
+  "No broker chain",
   "Registry & mutation support",
-  "Amin measurement arranged",
   "कोई छुपा चार्ज नहीं",
 ];
 const MARQUEE_EN = [
@@ -64,7 +64,7 @@ export default function HomePage() {
   ];
 
   const statsRow = [
-    { key: "total", value: SITE.portfolioTotal, suffix: "", icon: "ledger", labelEn: "Properties in hand", labelHi: "कुल प्रॉपर्टी" },
+    { key: "total", value: SITE.portfolioTotal, suffix: "", icon: "ledger", labelEn: "Properties he owns", labelHi: "उनकी कुल प्रॉपर्टी" },
     { key: "published", value: stats.total, suffix: "", icon: "spark", labelEn: "Live listings", labelHi: "उपलब्ध प्रॉपर्टी" },
     { key: "areas", value: SERVICE_AREAS.length, suffix: "", icon: "map", labelEn: "Areas we cover", labelHi: "इलाके" },
     { key: "years", value: years, suffix: "+", icon: "clock", labelEn: "Years in the market", labelHi: "साल का अनुभव" },
@@ -113,7 +113,7 @@ export default function HomePage() {
                   <span className="flex items-center gap-2 rounded-full border border-cream/20 px-3.5 py-1.5">
                     <Icon name="ledger" size={14} className="text-brass-soft" />
                     <strong className="font-semibold text-cream tnum">{SITE.portfolioTotal}</strong>{" "}
-                    <Bi en="properties in hand" hi="प्रॉपर्टी हमारे पास" />
+                    <Bi en="properties he owns" hi="प्रॉपर्टी उनके नाम" />
                   </span>
                   <span className="flex items-center gap-2 rounded-full border border-cream/20 px-3.5 py-1.5">
                     <Icon name="spark" size={14} className="text-brass-soft" />
@@ -176,7 +176,7 @@ export default function HomePage() {
                         <Bi en={pick.locality} hi={localityName(pick.locality, "hi")} />
                       </span>
                       <span className="font-display text-[1.15rem] text-brass-soft">
-                        <Bi en={`₹${Number(pick.price).toLocaleString("en-IN")} / sq.ft`} hi={`₹${Number(pick.price).toLocaleString("en-IN")} प्रति वर्ग फुट`} />
+                        <Bi en={listingPriceText(pick, "en")} hi={listingPriceText(pick, "hi")} />
                       </span>
                     </div>
                   </div>
@@ -265,14 +265,14 @@ export default function HomePage() {
               </span>
               <h2 className="mt-4 font-display text-[clamp(1.9rem,4.4vw,3rem)] leading-[1.05]">
                 <Bi
-                  en={`${SITE.portfolioTotal} properties in hand. Only ${stats.total} on this website.`}
-                  hi={`${SITE.portfolioTotal} प्रॉपर्टी — वेबसाइट पर सिर्फ़ ${stats.total}.`}
+                  en={`${SITE.portfolioTotal} properties he owns. Only ${stats.total} on this website.`}
+                  hi={`उनकी ${SITE.portfolioTotal} प्रॉपर्टी — वेबसाइट पर सिर्फ़ ${stats.total}.`}
                 />
               </h2>
               <p className="mt-5 max-w-xl text-[0.98rem] leading-relaxed text-cream/70">
                 <Bi
-                  en="Most owners do not want their property advertised openly, so the rest is shared on a call or at the office. Below are the live per sq.ft rates for each area, and what each one sits near — those landmarks are what the circle rate is worked out from."
-                  hi="ज़्यादातर मालिक नहीं चाहते कि उनकी प्रॉपर्टी खुले तौर पर विज्ञापित हो। इसलिए बाकी प्रॉपर्टी कॉल पर या ऑफिस आकर बताई जाती है। नीचे हर इलाके का भाव प्रति वर्ग फुट है, और वह किसके पास है — सर्किल रेट इन्हीं स्थलों के आधार पर तय होता है।"
+                  en="Every property here is his own, so you deal directly with the owner — no broker chain. Most of the rest are not advertised openly and are shared on a call or at the office. Below are the live per sq.ft rates for each area and what each one sits near; those landmarks are what the circle rate is worked out from."
+                  hi="यहाँ लगी हर प्रॉपर्टी उन्हीं की है, इसलिए आप सीधे मालिक से बात करते हैं — कोई बिचौलिया नहीं। बाकी ज़्यादातर प्रॉपर्टी खुले तौर पर विज्ञापित नहीं की जातीं, वे कॉल पर या ऑफिस में बताई जाती हैं। नीचे हर इलाके का भाव प्रति वर्ग फुट है और वह किसके पास है; सर्किल रेट इन्हीं स्थलों से तय होता है।"
                 />
               </p>
 
@@ -590,8 +590,8 @@ export default function HomePage() {
             </h2>
             <p className="mt-4 max-w-xl text-cream/65">
               <Bi
-                en={`We hold ${SITE.portfolioTotal} properties and only ${stats.total} are published here. Tell us the area, budget and requirement — you will have an answer within a day.`}
-                hi={`हमारे पास ${SITE.portfolioTotal} प्रॉपर्टी हैं और यहाँ सिर्फ़ ${stats.total} लगी हैं। इलाका, बजट और ज़रूरत बताइए — एक दिन में जवाब।`}
+                en={`He owns ${SITE.portfolioTotal} properties and only ${stats.total} are published here. Tell us the area, budget and requirement — you will have an answer within a day.`}
+                hi={`उनके नाम ${SITE.portfolioTotal} प्रॉपर्टी हैं और यहाँ सिर्फ़ ${stats.total} लगी हैं। इलाका, बजट और ज़रूरत बताइए — एक दिन में जवाब।`}
               />
             </p>
             <div className="mt-8 flex flex-wrap gap-3">

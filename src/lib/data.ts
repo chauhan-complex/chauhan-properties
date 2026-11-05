@@ -31,6 +31,13 @@ export function allProperties(): Property[] {
   return LISTINGS;
 }
 
+/** A listing with no published rate sorts to the end rather than to zero. */
+function priceOf(property: Property, direction: "asc" | "desc") {
+  const n = Number(property.price);
+  if (!property.price || n === 0) return direction === "asc" ? Number.POSITIVE_INFINITY : -1;
+  return n;
+}
+
 function matches(property: Property, filters: PropertyFilters) {
   if (filters.purpose && filters.purpose !== "all" && property.purpose !== filters.purpose) return false;
   if (filters.category && filters.category !== "all" && property.category !== filters.category) return false;
@@ -63,9 +70,9 @@ function sortRows(rows: Property[], sort: SortKey = "newest") {
   const copy = [...rows];
   switch (sort) {
     case "price_asc":
-      return copy.sort((a, b) => Number(a.price) - Number(b.price));
+      return copy.sort((a, b) => priceOf(a, "asc") - priceOf(b, "asc"));
     case "price_desc":
-      return copy.sort((a, b) => Number(b.price) - Number(a.price));
+      return copy.sort((a, b) => priceOf(b, "desc") - priceOf(a, "desc"));
     case "popular":
       return copy.sort((a, b) => b.views - a.views || Number(b.featured) - Number(a.featured));
     default:

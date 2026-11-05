@@ -46,8 +46,8 @@ export default function SiteFooter({ published }: { published?: number }) {
             <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-cream/15 px-4 py-2 text-[0.78rem] text-brass-soft tnum">
               <Icon name="ledger" size={14} />
               {lang === "hi"
-                ? `कुल ${SITE.portfolioTotal} प्रॉपर्टी · यहाँ ${listed} प्रकाशित`
-                : `${SITE.portfolioTotal} properties in hand · ${listed} published here`}
+                ? `उनकी ${SITE.portfolioTotal} प्रॉपर्टी · यहाँ ${listed} प्रकाशित`
+                : `${SITE.portfolioTotal} properties he owns · ${listed} published here`}
             </p>
 
             <div className="mt-6 flex items-center gap-3">

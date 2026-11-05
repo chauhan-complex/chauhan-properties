@@ -95,7 +95,7 @@ const en: Record<string, string> = {
   "list.title.lease": "Properties on lease",
   "list.title.in": "in {loc}",
   "list.callout":
-    "Every listing below has had its papers read by us. Call {phone} for a same-day site visit.",
+    "Every listing below is the owner's own property, and the papers are with him. Call {phone} for a same-day site visit.",
   "list.stat.matching": "matching",
   "list.stat.sale": "for sale",
   "list.stat.rentlease": "rent / lease",
@@ -103,7 +103,7 @@ const en: Record<string, string> = {
   "list.foundOne": "property found",
   "list.empty.title": "Nothing matches that yet",
   "list.empty.body":
-    "Try widening the budget, removing the locality filter, or simply call the office — a lot of what we handle is never published on the website.",
+    "Try widening the budget, removing the area filter, or simply call the office — most of what the owner holds is never published on the website.",
   "list.empty.cta": "Ask us directly",
   "list.prev": "Prev",
   "list.next": "Next",
@@ -152,7 +152,7 @@ const en: Record<string, string> = {
   "detail.rateLabel": "Quoted rate",
   "detail.rateNote":
     "Total price depends on the area you take. We do the full calculation with you, in writing — registry, stamp duty and mutation included.",
-  "detail.inventory": "{published} published · {total} properties in hand",
+  "detail.inventory": "{published} published · {total} properties he owns",
   "detail.inventoryNote":
     "Houses, buildings, apartments and rentals are being added soon. For anything not listed here, call the office.",
   "detail.monthlyRent": "Monthly rent",
@@ -444,7 +444,7 @@ const hi: Record<string, string> = {
   "list.title.lease": "लीज़ की प्रॉपर्टी",
   "list.title.in": "{loc} में",
   "list.callout":
-    "नीचे लगी हर प्रॉपर्टी के कागज़ हमने खुद पढ़े हैं। उसी दिन साइट विज़िट के लिए {phone} पर कॉल करें।",
+    "नीचे लगी हर प्रॉपर्टी मालिक की अपनी है और कागज़ उनके पास हैं। उसी दिन साइट विज़िट के लिए {phone} पर कॉल करें।",
   "list.stat.matching": "मिल रही हैं",
   "list.stat.sale": "बिक्री के लिए",
   "list.stat.rentlease": "किराया / लीज़",
@@ -452,7 +452,7 @@ const hi: Record<string, string> = {
   "list.foundOne": "प्रॉपर्टी मिली",
   "list.empty.title": "इस शर्त पर अभी कुछ नहीं मिला",
   "list.empty.body":
-    "बजट थोड़ा बढ़ाइए या इलाके का फ़िल्टर हटाइए — या सीधे ऑफिस में कॉल कर लीजिए। हमारे पास बहुत कुछ ऐसा भी है जो वेबसाइट पर नहीं लगाया जाता।",
+    "बजट थोड़ा बढ़ाइए या इलाके का फ़िल्टर हटाइए — या सीधे ऑफिस में कॉल कर लीजिए। मालिक के पास बहुत कुछ ऐसा भी है जो वेबसाइट पर नहीं लगाया जाता।",
   "list.empty.cta": "हमसे सीधे पूछें",
   "list.prev": "पिछला",
   "list.next": "अगला",

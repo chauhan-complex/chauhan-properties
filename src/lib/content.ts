@@ -16,7 +16,7 @@ export const SERVICES = [
     title: "Buying & selling",
     hindi: "खरीद-फरोख्त",
     body:
-      "Plots, farmhouses, flats, shops and whole buildings. We match a buyer to a property only after both sides have shown us their papers.",
+      "Plots, land, houses, shops and buildings — most of it his own property, sold direct with no broker in between. Where he arranges a sale for somebody else, buyer and property are matched only after both sides have shown their papers.",
     points: ["Fair market rate in writing", "Full registry & mutation support", "Loan paperwork assistance"],
   },
   {
@@ -102,15 +102,15 @@ export const PROCESS = [
 export const FAQS = [
   {
     q: "Do you charge brokerage, and how much?",
-    a: "Yes, and it is told to you on day one — never at the registry table. For a sale it is a small percentage from both sides; for rent and lease it is typically one month's rent or a fixed annual fee. If a deal does not happen, you owe nothing.",
+    a: "Not on anything listed on this website. Every property here is Mukesh Singh Chauhan's own, so you pay the agreed price plus stamp duty and registry — nothing else, and no broker's cut. If he ever arranges a sale between two other parties, the commission is disclosed on day one in writing, and nothing is due if the deal does not happen.",
   },
   {
     q: "How do I know the property papers are clean?",
-    a: "Every listing here has already been through our verification: khatauni and khesra from the revenue department, the registry chain for the last thirty years, mutation in the seller's name, an encumbrance check and, for plots, the LDA or colony sanction plan. We hand you a written summary before you pay a token.",
+    a: "Every property listed here is the owner's own, so the papers are already in his hands — the registry, khatauni and khesra from the revenue department, mutation in his name and an encumbrance check. He shows you the documents himself and hands you a written summary before you pay a token. You are not taking a dealer's word about somebody else's title.",
   },
   {
     q: "Do you deal in areas outside your main belt?",
-    a: "Our belt is Sarojini Nagar block — Amausi, Gauri, Miranpur Pinwat, Aurawan and Piparsand — and that is where almost everything we handle sits. If your land is in a neighbouring tehsil, call and tell us where; we will say plainly whether we know that area well enough to price it. For agricultural land we follow the UP Revenue Code rules on who can buy.",
+    a: "Our belt is Sarojini Nagar block — Amausi, Gauri, Miranpur Pinwat, Aurawan and Piparsand — and that is where almost everything he owns sits. If your land is in a neighbouring tehsil, call and tell us where; we will say plainly whether we know that area well enough to price it. For agricultural land we follow the UP Revenue Code rules on who can buy.",
   },
   {
     q: "What is the difference between rent and lease here?",
@@ -126,11 +126,11 @@ export const FAQS = [
   },
   {
     q: "You handle 146 properties but only 9 are listed here. Why?",
-    a: "Only nine land parcels are published at the moment — in Amausi, Gauri, Miranpur Pinwat, Aurawan and Piparsand. The rest, including houses, buildings, apartments, rentals and other land, are shared on a call or in person because most owners do not want their property advertised openly. Tell us the area and your budget and we will send whatever is available.",
+    a: "Only the land parcels you see on the listings page are published at the moment — in Amausi, Gauri, Miranpur Pinwat, Aurawan and Piparsand. The rest, including houses, buildings, apartments, rentals and other land, are shared on a call or in person because most of them are simply not advertised openly. Tell us the area and your budget and he will send whatever is available.",
   },
   {
     q: "Some listings have no photographs. Why?",
-    a: "For most of the land we publish only the area and the rate, because that is what the owner has agreed to. Real photographs, the khesra extract and a video walkthrough are shared once we have spoken — and a site visit is arranged, usually the same day. We would rather show you the ground than a picture.",
+    a: "Because these are the owner's own plots, most of the land is published with just the area, the rate and the map pin — photographs of every plot have not been taken yet. Real photographs, the khesra extract and a video walkthrough are shared once we have spoken, and a site visit is arranged, usually the same day. He would rather show you the ground than a picture.",
   },
   {
     q: "The rate is quoted per square foot. What will the total come to?",

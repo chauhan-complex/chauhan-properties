@@ -6,7 +6,8 @@ import EnquiryForm from "@/components/enquiry-form";
 import PropertyCard from "@/components/property-card";
 import { Icon } from "@/components/icons";
 import { Reveal } from "@/components/primitives";
-import { LISTINGS, SITE } from "@/data/site";
+import { LISTINGS, SITE, embedUrl } from "@/data/site";
+import { videoList } from "@/lib/media";
 import { getPropertyBySlug, getSimilar } from "@/lib/data";
 import { CATEGORY_ICONS } from "@/lib/content";
 import { Bi, dualT } from "@/lib/dual";
@@ -17,7 +18,7 @@ import {
   dateText,
   localityName,
   numberToWordsHi,
-  priceText,
+  listingPriceText,
   purposeText,
   statusText,
 } from "@/lib/hi";
@@ -51,11 +52,20 @@ export default async function PropertyPage({ params }: { params: Promise<Params>
   if (!property) notFound();
 
   const t = dualT;
+  const hasPrice = Boolean(property.price) && Number(property.price) !== 0;
   const similar = getSimilar(property, 3);
-  const embed = property.mapUrl ? mapsEmbedUrl(property.mapUrl, 17) : "";
+  const embed =
+    property.lat != null && property.lng != null
+      ? embedUrl(property.lat, property.lng, 17)
+      : property.mapUrl
+        ? mapsEmbedUrl(property.mapUrl, 17)
+        : "";
   const enParagraphs = property.description.split(/\n{2,}/).filter(Boolean);
   const hiParagraphs = (property.descriptionHi || property.description).split(/\n{2,}/).filter(Boolean);
-  const rate = Number(property.price).toLocaleString("en-IN");
+  const fmtRate = (n: string | number) => Number(n).toLocaleString("en-IN");
+  const rate = property.priceMax
+    ? `${fmtRate(property.price)}–${fmtRate(property.priceMax)}`
+    : fmtRate(property.price);
 
   const waEn = `Namaste! I saw "${property.title}" on your website. Please share the area, papers and a site visit time.`;
   const waHi = `नमस्ते! मैंने आपकी वेबसाइट पर "${property.titleHi}" देखी। कृपया रकबा, कागज़ और साइट विज़िट का समय बताइए।`;
@@ -232,6 +242,12 @@ export default async function PropertyPage({ params }: { params: Promise<Params>
                   <p className="mt-1.5 text-[0.93rem] text-stone">
                     <Bi en={`${property.locality}, Sarojini Nagar, Lucknow, Uttar Pradesh`} hi={`${localityName(property.locality, "hi")}, सरोजिनी नगर, लखनऊ, उत्तर प्रदेश`} />
                   </p>
+                  {property.coordsLabel ? (
+                    <p className="mt-2.5 inline-flex items-center gap-2 rounded-full border border-line bg-paper px-3.5 py-1.5 text-[0.74rem] text-stone tnum">
+                      <Icon name="pin" size={13} className="text-brass" />
+                      <Bi en={`Exact pin · ${property.coordsLabel}`} hi={`सही लोकेशन · ${property.coordsLabel}`} />
+                    </p>
+                  ) : null}
                 </div>
                 <a
                   href={property.mapUrl}
@@ -266,16 +282,27 @@ export default async function PropertyPage({ params }: { params: Promise<Params>
               <div className="overflow-hidden rounded-[3px] border border-line bg-cream">
                 <div className="border-b border-line bg-ink px-6 py-6 text-cream">
                   <p className="eyebrow text-brass-soft">
-                    {property.priceBasis === "per_sqft" ? t("detail.rateLabel") : t("detail.askingPrice")}
+                    {!hasPrice ? (
+                      <Bi en="Price" hi="भाव" />
+                    ) : property.priceBasis === "per_sqft" ? (
+                      t("detail.rateLabel")
+                    ) : (
+                      t("detail.askingPrice")
+                    )}
                   </p>
                   <p className="mt-2 font-display text-[2.4rem] leading-none text-cream">
                     <Bi
-                      en={priceText(property.price, property.purpose, "en", property.priceBasis)}
-                      hi={priceText(property.price, property.purpose, "hi", property.priceBasis)}
+                      en={listingPriceText(property, "en")}
+                      hi={listingPriceText(property, "hi")}
                     />
                   </p>
                   <p className="mt-2.5 text-[0.82rem] leading-relaxed text-cream/60">
-                    {property.priceBasis === "per_sqft" ? (
+                    {!hasPrice ? (
+                      <Bi
+                        en="No rate is published for this one. The deal is discussed with the owner directly — call or WhatsApp below and he will tell you the price himself, along with whatever space you need."
+                        hi="इसका भाव वेबसाइट पर नहीं डाला गया है। सौदा सीधे मालिक से बात करके तय होता है — नीचे कॉल या व्हाट्सएप कीजिए, वे आपको भाव और आपकी ज़रूरत की जगह खुद बताएँगे।"
+                      />
+                    ) : property.priceBasis === "per_sqft" ? (
                       t("detail.rateNote")
                     ) : (
                       <Bi
@@ -285,15 +312,30 @@ export default async function PropertyPage({ params }: { params: Promise<Params>
                     )}
                   </p>
                   <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-cream/10 px-3 py-1.5 text-[0.76rem] text-brass-soft">
-                    <Icon name="spark" size={13} /> <Bi en={property.priceNote} hi={property.priceNoteHi} />
+                    <Icon name={hasPrice ? "spark" : "phone"} size={13} />{" "}
+                    <Bi en={property.priceNote} hi={property.priceNoteHi} />
                   </p>
-                  <p className="mt-3 text-[0.78rem] text-cream/50">
-                    <Bi
-                      en={`Total for the parcel depends on the area — ₹${rate} × your sq.ft. We do the maths with you.`}
-                      hi={`पार्सल का कुल दाम रकबे पर निर्भर करेगा — ₹${rate} × आपके वर्ग फुट। हिसाब हम आपके साथ लगाएँगे।`}
-                    />
-                  </p>
+                  {hasPrice && property.priceBasis === "per_sqft" ? (
+                    <p className="mt-3 text-[0.78rem] text-cream/50">
+                      <Bi
+                        en={`Total for the parcel depends on the area — ₹${rate} × your sq.ft. We do the maths with you.`}
+                        hi={`पार्सल का कुल दाम रकबे पर निर्भर करेगा — ₹${rate} × आपके वर्ग फुट। हिसाब हम आपके साथ लगाएँगे।`}
+                      />
+                    </p>
+                  ) : null}
                 </div>
+
+                {property.videoUrl ? (
+                  <a
+                    href={videoList(property.videoUrl)[0]}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center justify-center gap-2 border-b border-line bg-brass px-4 py-3.5 text-[0.76rem] font-bold tracking-[0.14em] text-ink uppercase transition-colors hover:bg-brass-soft"
+                  >
+                    <Icon name="play" size={16} strokeWidth={1.8} />{" "}
+                    <Bi en="Watch the full video tour" hi="पूरा वीडियो टूर देखें" />
+                  </a>
+                ) : null}
 
                 <div className="grid grid-cols-2 gap-px bg-line">
                   <a href={telLink(SITE.phone)} className="flex items-center justify-center gap-2 bg-cream px-4 py-4 text-[0.76rem] font-bold tracking-[0.14em] text-ink uppercase transition-colors hover:bg-paper-deep">

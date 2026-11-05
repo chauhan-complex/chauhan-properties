@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { AREAS, areaRateShort, type Area } from "@/data/site";
+import { AREAS, areaNearText, areaRateShort, type Area } from "@/data/site";
 
 /**
  * Hand-drawn survey map of the belt we work in — Amausi, Gauri, Miranpur
@@ -103,7 +103,7 @@ export default function AreaMap({
     const pos = POSITIONS[area.name] ?? { x: 100 + index * 60, y: 200, w: 160, h: 110 };
     const label = lang === "hi" ? area.nameHi : area.name;
     const rate = areaRateShort(area, lang);
-    const landmarks = (lang === "hi" ? area.nearHi : area.near).slice(0, NEAR_SHOWN).join(" · ");
+    const landmarks = areaNearText(area, lang, true);
 
     /* Devanagari glyphs are wider per character, and line 0 also carries the
        "near " / "पास में " prefix — both are subtracted from the budget. */
@@ -214,7 +214,7 @@ export default function AreaMap({
         <circle cx="30" cy="74" r="5.5" fill={accent} />
         <circle cx="30" cy="74" r="12" fill="none" stroke={accent} strokeWidth="1.2" opacity="0.55" />
         <text x="48" y="79" fill={text} fontSize="11.5" fontWeight="600">
-          {lang === "hi" ? "चाउहान कॉम्प्लेक्स — ऑफिस" : "Chauhan Complex — office"}
+          {lang === "hi" ? "चौहान कॉम्प्लेक्स — ऑफिस" : "Chauhan Complex — office"}
         </text>
       </g>
 

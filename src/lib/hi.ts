@@ -119,6 +119,25 @@ function trimNum(n: number) {
   return Number.isInteger(n) ? String(n) : n.toFixed(2).replace(/\.?0+$/, "");
 }
 
+/** Price label for a listing, honouring per sq.ft rates and rate ranges. */
+export function listingPriceText(
+  property: { price: string; priceMax?: string | null; purpose: string; priceBasis?: string | null },
+  lang: Lang,
+) {
+  // No number means the owner does not publish a rate — deal is done in person.
+  if (!property.price || Number(property.price) === 0) {
+    return lang === "hi" ? "भाव पूछिए" : "Price on request";
+  }
+  const fmt = (n: number) => n.toLocaleString("en-IN");
+  if (property.priceBasis === "per_sqft") {
+    const a = fmt(Number(property.price));
+    const b = property.priceMax ? fmt(Number(property.priceMax)) : null;
+    const body = b && b !== a ? `₹${a}–${b}` : `₹${a}`;
+    return lang === "hi" ? `${body} प्रति वर्ग फुट` : `${body} / sq.ft`;
+  }
+  return priceText(property.price, property.purpose, lang, "total");
+}
+
 export function areaText(value: string | number | null | undefined, unit: string, lang: Lang) {
   if (lang !== "hi") return formatArea(value, unit as Parameters<typeof formatArea>[1]);
   if (!value) return null;

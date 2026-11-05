@@ -8,6 +8,7 @@ import { Bi, dualT } from "@/lib/dual";
 import { SITE } from "@/data/site";
 import { HI_LANDMARKS } from "@/lib/content-hi";
 import { mapsCoords, mapsEmbedUrl, telLink, whatsappLink } from "@/lib/utils";
+import { embedUrl } from "@/data/site";
 
 export const metadata: Metadata = {
   title: "Contact — Chauhan Properties, Sarojini Nagar, Lucknow",
@@ -22,7 +23,8 @@ const LANDMARKS_EN = [
 
 export default function ContactPage() {
   const t = dualT;
-  const embed = SITE.officeMapUrl ? mapsEmbedUrl(SITE.officeMapUrl, 17) : "";
+  const embed = embedUrl(SITE.officeLat, SITE.officeLng, 17) ||
+    (SITE.officeMapUrl ? mapsEmbedUrl(SITE.officeMapUrl, 17) : "");
   const coords = SITE.officeMapUrl ? mapsCoords(SITE.officeMapUrl) : null;
 
   const cards = [
@@ -61,7 +63,7 @@ export default function ContactPage() {
       icon: "pin",
       labelKey: "contact.card.visit",
       valueEn: SITE.officeAddress.split("\n").slice(0, 2).join(", "),
-      valueHi: "चाउहान कॉम्प्लेक्स, कुदरत विहार कॉलोनी, सरोजिनी नगर",
+      valueHi: "चौहान कॉम्प्लेक्स, कुदरत विहार कॉलोनी, सरोजिनी नगर",
       href: SITE.officeMapUrl,
       noteKey: "contact.card.visitNote",
       actionKey: "detail.openMaps",

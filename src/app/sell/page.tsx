@@ -51,7 +51,7 @@ const DOCUMENTS: string[] = [
 
 const PROMISES = [
   { id: "fee", value: 0, en: "Upfront listing fee", hi: "अग्रिम लिस्टिंग शुल्क" },
-  { id: "held", value: SITE.portfolioTotal, en: "Properties we handle", hi: "कुल प्रॉपर्टी" },
+  { id: "held", value: SITE.portfolioTotal, en: "Properties he owns", hi: "उनकी कुल प्रॉपर्टी" },
   { id: "published", value: getStats().total, en: "Published on this website", hi: "इस वेबसाइट पर प्रकाशित" },
   { id: "years", value: 20, en: "Years in the business", hi: "साल का अनुभव" },
 ];

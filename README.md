@@ -14,6 +14,7 @@ Land and property in **Amausi · Gauri · Miranpur Pinwat · Aurawan · Piparsan
 | **GitHub account** | Hosted on `chauhan-complex`, not `brodante` — see **[PUSH-TO-CHAUHAN-COMPLEX.md](./PUSH-TO-CHAUHAN-COMPLEX.md)** |
 | **Hosting** | GitHub Pages via GitHub Actions — detail & troubleshooting in [DEPLOYMENT.md](./DEPLOYMENT.md) |
 | **Content** | one file: [`src/data/site.ts`](./src/data/site.ts) |
+| **Photos & video** | [MEDIA-GUIDE.md](./MEDIA-GUIDE.md) — YouTube for video, `public/photos/` for images, naming convention |
 
 ---
 

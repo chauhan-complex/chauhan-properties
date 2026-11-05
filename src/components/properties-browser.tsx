@@ -83,8 +83,13 @@ export default function PropertiesBrowser({ listings }: { listings: Property[] }
       return true;
     });
     const sorted = [...filtered];
-    if (sort === "price_asc") sorted.sort((a, b) => Number(a.price) - Number(b.price));
-    else if (sort === "price_desc") sorted.sort((a, b) => Number(b.price) - Number(a.price));
+    const priced = (p: Property, asc: boolean) => {
+      const n = Number(p.price);
+      if (!p.price || n === 0) return asc ? Number.POSITIVE_INFINITY : -1;
+      return n;
+    };
+    if (sort === "price_asc") sorted.sort((a, b) => priced(a, true) - priced(b, true));
+    else if (sort === "price_desc") sorted.sort((a, b) => priced(b, false) - priced(a, false));
     else
       sorted.sort(
         (a, b) =>
@@ -199,8 +204,8 @@ export default function PropertiesBrowser({ listings }: { listings: Property[] }
               <p className="text-[0.88rem] text-stone">
                 <Bi2
                   lang={lang}
-                  en="Land here is quoted per square foot. Tell us the area you need on WhatsApp and we will work out the total, including registry and stamp duty."
-                  hi="यहाँ ज़मीन का भाव प्रति वर्ग फुट बताया जाता है। आपको कितना रकबा चाहिए, व्हाट्सएप पर बताइए — रजिस्ट्री और स्टांप ड्यूटी सहित पूरा हिसाब हम लगा देंगे।"
+                  en="Every listing here is the owner's own property, and land is quoted per square foot. Tell us the area you need on WhatsApp and we will work out the total, including registry and stamp duty."
+                  hi="यहाँ लगी हर प्रॉपर्टी मालिक की अपनी है और ज़मीन का भाव प्रति वर्ग फुट बताया जाता है। आपको कितना रकबा चाहिए, व्हाट्सएप पर बताइए — रजिस्ट्री और स्टांप ड्यूटी सहित पूरा हिसाब वे लगा देंगे।"
                 />
               </p>
               <div className="mt-4 flex flex-wrap gap-3">

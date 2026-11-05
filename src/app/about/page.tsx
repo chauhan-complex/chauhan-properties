@@ -24,8 +24,8 @@ const VALUES_EN = [
   },
   {
     icon: "rupee",
-    title: "One rate, told to both sides",
-    body: "We never quote a seller one number and a buyer another to pocket the difference. Our commission is disclosed on day one, in writing.",
+    title: "Direct from the owner",
+    body: "Everything listed here is Mukesh Singh Chauhan's own property. There is no broker chain, no second dealer's margin folded into the rate, and nobody in the middle who has to phone someone else before answering your question.",
   },
   {
     icon: "handshake",
@@ -63,7 +63,7 @@ export default function AboutPage() {
     },
     {
       title: `${SITE.portfolioTotal} properties, one ledger`,
-      body: "Today the desk works with owners across all five areas. Most of what we handle is never advertised — it is shared on a call, which is why this website publishes only a few listings and asks you to phone for the rest.",
+      body: "Today he owns property across all five areas. Most of it is never advertised — it is shared on a call, which is why this website publishes only a few listings and asks you to phone for the rest.",
     },
   ];
 
@@ -112,7 +112,7 @@ export default function AboutPage() {
             <Reveal delay={100} className="mt-8 grid grid-cols-3 gap-px overflow-hidden rounded-[3px] border border-line bg-line">
               {[
                 { key: "years", value: years, labelKey: "about.stats.years" },
-                { key: "held", value: SITE.portfolioTotal, labelEn: "Properties in hand", labelHi: "कुल प्रॉपर्टी" },
+                { key: "held", value: SITE.portfolioTotal, labelEn: "Properties he owns", labelHi: "उनकी कुल प्रॉपर्टी" },
                 { key: "live", value: stats.total, labelKey: "about.stats.listings" },
               ].map((item) => (
                 <div key={item.key} className="bg-cream px-3 py-5 text-center">

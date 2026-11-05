@@ -4,7 +4,8 @@ import { Icon } from "./icons";
 import { Bi } from "@/lib/dual";
 import type { Property } from "@/data/site";
 import { cn } from "@/lib/utils";
-import { areaText, categoryText, localityName, priceText, purposeText } from "@/lib/hi";
+import { captionFromFilename } from "@/lib/media";
+import { areaText, categoryText, listingPriceText, localityName, purposeText } from "@/lib/hi";
 
 /** Cards have limited room — show three landmarks and an ellipsis. */
 function shortList(items: string[], max = 3) {
@@ -35,8 +36,8 @@ export default function PropertyCard({
   const cover = property.images[0] ?? "/fallback-property.svg";
   const areaEn = areaText(property.areaValue, property.areaUnit, "en");
   const areaHi = areaText(property.areaValue, property.areaUnit, "hi");
-  const priceEn = priceText(property.price, property.purpose, "en", property.priceBasis);
-  const priceHi = priceText(property.price, property.purpose, "hi", property.priceBasis);
+  const priceEn = listingPriceText(property, "en");
+  const priceHi = listingPriceText(property, "hi");
   const isList = variant === "list";
 
   return (
@@ -54,7 +55,7 @@ export default function PropertyCard({
         <div className={cn("relative w-full", isList ? "aspect-4/3 sm:h-full" : "aspect-4/3")}>
           <Image
             src={cover}
-            alt={property.title}
+            alt={`${property.title}${cover.startsWith("/photos/") ? ` — ${captionFromFilename(cover, "en").full}` : ""}`}
             fill
             sizes={isList ? "(max-width: 640px) 100vw, 38vw" : "(max-width: 768px) 100vw, 33vw"}
             className="object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-[1.07]"
@@ -93,7 +94,8 @@ export default function PropertyCard({
           )}
           {property.videoUrl ? (
             <span className="flex items-center gap-1 rounded-full bg-ink/55 px-2.5 py-1 backdrop-blur-sm">
-              <Icon name="play" size={12} /> <Bi en="Video" hi="वीडियो" />
+              <Icon name="play" size={12} />{" "}
+              <Bi en="Video tour" hi="वीडियो टूर" />
             </span>
           ) : null}
         </div>
@@ -111,6 +113,11 @@ export default function PropertyCard({
                 hi={`${areaHi ? `${areaHi} · ` : ""}${categoryText(property.category, "hi")}`}
               />
             </p>
+            {!property.price || Number(property.price) === 0 ? (
+              <p className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-brass/50 px-2.5 py-1 text-[0.66rem] font-semibold tracking-[0.14em] text-brass uppercase">
+                <Icon name="phone" size={11} /> <Bi en="Deal direct with owner" hi="सीधे मालिक से बात" />
+              </p>
+            ) : null}
           </div>
           <span className="mt-1 hidden h-8 w-8 shrink-0 items-center justify-center rounded-full border border-line text-stone transition-all duration-400 group-hover:border-moss group-hover:bg-moss group-hover:text-cream sm:flex">
             <Icon name="arrow-up-right" size={15} />
