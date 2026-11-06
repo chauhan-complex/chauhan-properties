@@ -19,7 +19,7 @@ export default function PropertiesPage() {
 
   return (
     <>
-      <section className="relative overflow-hidden border-b border-line bg-ink py-14 text-cream md:py-16">
+      <section className="relative overflow-hidden border-b border-line bg-ink py-9 text-cream md:py-16">
         <div className="paper-grid pointer-events-none absolute inset-0 opacity-[0.06]" />
         <div className="pointer-events-none absolute -top-20 right-10 h-64 w-64 rounded-full bg-moss-soft/25 blur-3xl" />
         <div className="relative mx-auto max-w-[86rem] px-5 md:px-6">
@@ -33,25 +33,25 @@ export default function PropertiesPage() {
             </span>
           </nav>
 
-          <Reveal className="mt-5 flex flex-wrap items-end justify-between gap-6">
+          <Reveal className="mt-4 flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
             <div>
-              <h1 className="font-display text-[clamp(2rem,4.6vw,3.2rem)] leading-[1.04]">
+              <h1 className="font-display text-[clamp(1.65rem,4.6vw,3.2rem)] leading-[1.06]">
                 <Bi en="Land & property in our belt" hi="हमारे इलाके की ज़मीन और प्रॉपर्टी" />
               </h1>
-              <p className="mt-3 max-w-xl text-[0.95rem] text-cream/60">
+              <p className="mt-2.5 max-w-xl text-[0.9rem] text-cream/60 md:mt-3 md:text-[0.95rem]">
                 <Bi
                   en={`Every listing below has had its papers read by us. Call ${SITE.phone} for a same-day site visit.`}
                   hi={`नीचे लगी हर प्रॉपर्टी के कागज़ हमने खुद पढ़े हैं। उसी दिन साइट विज़िट के लिए ${SITE.phone} पर कॉल करें।`}
                 />
               </p>
-              <p className="mt-2 max-w-xl text-[0.9rem] text-brass-soft/85">
+              <p className="mt-2 hidden max-w-xl text-[0.9rem] text-brass-soft/85 sm:block">
                 <Bi
                   en={`Every listing here is the owner's own property, so you deal with him directly. He owns ${SITE.portfolioTotal} in total and ${stats.total} are published here; houses, buildings and rentals are being added — for the rest, call the office.`}
                   hi={`यहाँ लगी हर प्रॉपर्टी मालिक की अपनी है, इसलिए बात सीधे उनसे होती है। उनके नाम कुल ${SITE.portfolioTotal} प्रॉपर्टी हैं, यहाँ ${stats.total} प्रकाशित हैं — मकान, बिल्डिंग और किराये की प्रॉपर्टी जुड़ रही हैं, बाकी के लिए ऑफिस में कॉल कीजिए।`}
                 />
               </p>
             </div>
-            <div className="flex gap-8">
+            <div className="flex gap-5 md:gap-8">
               <Stat value={stats.total} labelEn="published" labelHi="प्रकाशित" />
               <Stat value={SITE.portfolioTotal} labelEn="he owns" labelHi="उनकी प्रॉपर्टी" />
               <Stat value={SERVICE_AREAS.length} labelEn="areas" labelHi="इलाके" />
@@ -60,7 +60,7 @@ export default function PropertiesPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-[86rem] px-5 py-8 md:px-6 md:py-10">
+      <section className="mx-auto max-w-[86rem] px-5 py-5 md:px-6 md:py-10">
         <PropertiesBrowser listings={listings} />
       </section>
     </>
@@ -70,8 +70,8 @@ export default function PropertiesPage() {
 function Stat({ value, labelEn, labelHi }: { value: number; labelEn: string; labelHi: string }) {
   return (
     <div>
-      <p className="font-display text-[2rem] leading-none text-brass-soft tnum">{value}</p>
-      <p className="mt-1.5 text-[0.68rem] tracking-[0.18em] text-cream/50 uppercase">
+      <p className="font-display text-[1.5rem] leading-none text-brass-soft tnum md:text-[2rem]">{value}</p>
+      <p className="mt-1 text-[0.6rem] tracking-[0.16em] text-cream/50 uppercase md:mt-1.5 md:text-[0.68rem]">
         <Bi en={labelEn} hi={labelHi} />
       </p>
     </div>
